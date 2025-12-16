@@ -22,68 +22,30 @@
     #intro-overlay {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         background: radial-gradient(circle at 50% 50%, #004e92 0%, #000428 100%);
-        z-index: 99999; /* Đảm bảo nằm trên cùng */
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        text-align: center;
-        transition: all 0.8s ease-in-out;
-        padding: 20px;
+        z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; transition: all 0.8s ease-in-out; padding: 20px;
     }
     #intro-overlay.fade-out { opacity: 0; visibility: hidden; transform: scale(1.1); pointer-events: none; }
-    
     .intro-logos-container { display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; }
     .intro-logo { height: 90px; width: auto; filter: drop-shadow(0 0 15px rgba(255,255,255,0.6)); transition: transform 0.3s; background: rgba(255,255,255,0.1); border-radius: 50%; padding: 5px; backdrop-filter: blur(5px); }
     .intro-logo:hover { transform: scale(1.1); }
-    
     .intro-welcome { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: #a5f3fc; font-weight: 600; margin-bottom: 10px; }
-    
     .intro-title { 
-        font-family: 'Montserrat', sans-serif; 
-        font-weight: 900; 
-        font-size: 3rem; 
-        text-transform: uppercase; 
-        line-height: 1.2;
-        background: linear-gradient(to bottom, #ffffff, #e0f2fe);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 4px 30px rgba(0, 210, 255, 0.5);
-        margin-bottom: 15px;
+        font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 3rem; text-transform: uppercase; line-height: 1.2;
+        background: linear-gradient(to bottom, #ffffff, #e0f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        text-shadow: 0 4px 30px rgba(0, 210, 255, 0.5); margin-bottom: 15px;
     }
-    
-    .intro-subtitle { 
-        font-family: 'Dancing Script', cursive; 
-        font-size: 2.5rem; 
-        color: var(--gold); 
-        margin-bottom: 40px; 
-        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    }
-    
+    .intro-subtitle { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--gold); margin-bottom: 40px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .btn-intro-start {
-        background: linear-gradient(45deg, #FFD700, #ff8c00);
-        color: #000;
-        font-weight: 800;
-        padding: 18px 60px;
-        border-radius: 50px;
-        font-size: 1.3rem;
-        border: 2px solid #fff;
-        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        animation: pulseBtn 2s infinite;
-        cursor: pointer;
-        text-decoration: none;
+        background: linear-gradient(45deg, #FFD700, #ff8c00); color: #000; font-weight: 800; padding: 18px 60px; border-radius: 50px;
+        font-size: 1.3rem; border: 2px solid #fff; box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); text-transform: uppercase; letter-spacing: 1px;
+        transition: all 0.3s ease; animation: pulseBtn 2s infinite; cursor: pointer; text-decoration: none;
     }
     .btn-intro-start:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); background: #fff; color: var(--primary); }
-    
     @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
-    
-    @media (max-width: 768px) {
-        .intro-title { font-size: 2rem; }
-        .intro-subtitle { font-size: 2rem; }
-        .intro-logo { height: 70px; }
-    }
-    /* --- HẾT CSS INTRO --- */
+    @media (max-width: 768px) { .intro-title { font-size: 2rem; } .intro-subtitle { font-size: 2rem; } .intro-logo { height: 70px; } }
 
+    /* --- CSS CHUNG --- */
     .navbar { background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.03); padding: 10px 0; transition: transform 0.4s ease-in-out; z-index: 1000; }
     .navbar.hidden { transform: translateY(-100%); } 
     .nav-link { font-weight: 600; color: #475569; margin-left: 20px; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
@@ -93,6 +55,7 @@
     .dropdown-item:hover { background: #f1f5f9; color: var(--primary); }
     .nav-search-btn { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f1f5f9; color: var(--primary); transition: 0.3s; margin-left: 15px; cursor: pointer; }
     .nav-search-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
+    
     .hero { background: radial-gradient(circle at 50% 120%, #1e5799 0%, #031b4e 50%, #000020 100%); color: white; padding: 120px 0 60px; position: relative; text-align: center; overflow: hidden; }
     .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%); pointer-events: none; }
     .partner-logos { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; position: relative; z-index: 5; }
@@ -104,6 +67,7 @@
     .btn-hero-white:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); background: #f8fafc; }
     .btn-hero-blue { background: rgba(255,255,255,0.1); color: white; font-weight: 700; padding: 10px 30px; border-radius: 50px; border: 2px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px); transition: 0.3s; }
     .btn-hero-blue:hover { background: rgba(255,255,255,0.2); border-color: white; transform: translateY(-3px); }
+    
     .stats-section { padding: 40px 0; background: #fff; border-bottom: 1px solid #e2e8f0; }
     .stat-card { background: white; border-radius: 12px; padding: 15px; display: flex; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: 0.3s; height: 100%; border: 1px solid #f1f5f9; }
     .stat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
@@ -114,6 +78,7 @@
     .stat-red .stat-icon-box { background: #fee2e2; color: #dc2626; }
     .stat-green .stat-icon-box { background: #dcfce7; color: #16a34a; }
     .stat-yellow .stat-icon-box { background: #fef3c7; color: #d97706; }
+    
     .ranking-section { background: linear-gradient(to bottom, #f8fafc, #edf2f7); padding: 40px 0; border-top: 1px dashed #cbd5e1; }
     .ranking-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); height: 100%; border: 1px solid white; }
     .ranking-header { font-weight: 800; color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9rem; }
@@ -124,6 +89,7 @@
     .rank-2 { background: var(--silver); }
     .rank-3 { background: var(--bronze); }
     .rank-count { margin-left: auto; font-weight: 700; color: var(--primary); background: #e0f2fe; padding: 3px 8px; border-radius: 20px; font-size: 0.75rem; }
+    
     .post-card { background: linear-gradient(to bottom, #ffffff 0%, #f0f9ff 100%); border: 1px solid #bae6fd; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.3s; cursor: pointer; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; top: 0; }
     .post-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(2, 132, 199, 0.15); border-color: var(--primary); }
     .post-header { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #e0f2fe; background: rgba(255,255,255,0.6); }
@@ -134,13 +100,16 @@
     .dot-sep { margin: 0 6px; font-size: 0.4rem; color: #cbd5e1; display: inline-block; vertical-align: middle; }
     .handwritten-text { font-family: 'Great Vibes', cursive; font-size: 1.5rem; color: #334155; margin-top: 5px; margin-bottom: 10px; line-height: 1.4; }
     .badge-custom { background-color: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-bottom: 8px; border: 1px solid #bae6fd; }
+    
     .search-bar-container { background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 30px; border: 1px solid #e2e8f0; }
     .form-control-search { border-radius: 50px; border: 1px solid #cbd5e1; padding: 8px 20px; transition: 0.3s; font-size: 0.9rem; }
     .form-control-search:focus { box-shadow: 0 0 0 3px rgba(21, 66, 149, 0.1); border-color: var(--primary); }
     .form-select-search { border-radius: 50px; border: 1px solid #cbd5e1; padding: 8px 20px; cursor: pointer; font-size: 0.9rem; }
+    
     .screen { display: none; opacity: 0; transition: opacity 0.3s; flex: 1; }
     .screen.active { display: block; opacity: 1; }
     .media-box { background: #0f172a; border-radius: 12px; overflow: hidden; margin-top: 12px; display: flex; justify-content: center; align-items: center; width: 100%; }
+    
     footer { background-color: #0f172a; color: white; padding: 60px 0 30px; margin-top: auto; border-top: 4px solid var(--primary); }
     .footer-title { font-weight: 800; font-size: 1.2rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
     .footer-desc { font-size: 0.9rem; color: #94a3b8; margin-bottom: 25px; }
@@ -148,6 +117,7 @@
     .btn-group-join:hover { background: white; color: #0f172a; transform: translateY(-3px); }
     .footer-line { border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0 20px; }
     .copyright { font-size: 0.8rem; color: #64748b; }
+    
     #detail-screen { background: #fff; padding-top: 0 !important; z-index: 2000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; scroll-behavior: smooth; }
     .detail-header-sticky { position: sticky; top: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); z-index: 2001; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
     .detail-container { max-width: 800px; margin: 0 auto; padding: 40px 20px 100px; }
@@ -158,8 +128,24 @@
     .detail-image-box img { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: block; }
     .pdf-container { position: relative; width: 100%; height: 85vh; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .pdf-container iframe { width: 100%; height: 100%; border: none; }
-    .video-container { border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: #000; position: relative; }
-    .pdf-container::after, .video-container::after { content: ''; position: absolute; top: 0; right: 0; width: 65px; height: 65px; background: transparent; z-index: 100; pointer-events: auto; }
+    
+    /* --- CSS SỬA LỖI VIDEO VỪA KHUNG & NỀN ĐEN CHUẨN --- */
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 ratio */
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #000;
+        width: 100%;
+        margin-top: 10px;
+        z-index: 10;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .video-container iframe {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
+    }
+    
     .comment-section { background: #f8fafc; padding: 30px; border-radius: 20px; margin-top: 40px; border: 1px solid #f1f5f9; }
     .notify-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; }
     .notify-warning { background: #fff7ed; color: #f97316; }
@@ -175,18 +161,15 @@
   <!-- HTML: TRANG CHÀO MỪNG (INTRO SCREEN) -->
   <div id="intro-overlay">
       <div class="intro-logos-container animate__animated animate__fadeInDown">
-          <!-- Sử dụng lại 2 logo từ project -->
           <img src="https://drive.google.com/thumbnail?id=1QP8DWI4lJECWbmrtAgq8Qhrj8soWazmL&sz=w500" class="intro-logo" alt="Logo 1">
           <img src="https://drive.google.com/thumbnail?id=14UNg_aKyxUff_Jofn5-VmuIA0OmpB7Ce&sz=w500" class="intro-logo" alt="Logo 2">
       </div>
       <div class="intro-welcome animate__animated animate__fadeInUp">CHÀO MỪNG BẠN ĐẾN VỚI</div>
       <div class="intro-title animate__animated animate__zoomIn animate__delay-1s">NHỮNG CÁNH THƯ VƯỢT SÓNG</div>
       <div class="intro-subtitle animate__animated animate__fadeInUp animate__delay-1s">...Cầu nối số gửi trọn yêu thương</div>
-      
       <button class="btn-intro-start animate__animated animate__bounceInUp animate__delay-2s" onclick="enterSite()">
           <i class="fas fa-ship me-2"></i> BẤM ĐỂ BẮT ĐẦU
       </button>
-      
       <div class="mt-4 text-white-50 small animate__animated animate__fadeIn animate__delay-3s">
           Khơi dậy tình yêu biển đảo - Bảo vệ chủ quyền thiêng liêng của Tổ quốc
       </div>
@@ -206,7 +189,7 @@
             <a class="nav-link dropdown-toggle" id="navbarDropdown" data-bs-toggle="dropdown"><i class="far fa-compass me-1"></i> Khám Phá</a>
             <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn">
               <li><a class="dropdown-item" onclick="showFeed('all')">Tất cả thư</a></li>
-              <li><a class="dropdown-item" onclick="showFeed('popular')">Ngọn hải đăng</a></li>
+              <li><a class="dropdown-item" onclick="showFeed('popular')">Ngọn hải đăng (Nhiều tim)</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" onclick="showFeed('haiquan')">Gửi Chiến sĩ Hải Quân</a></li>
               <li><a class="dropdown-item" onclick="showFeed('canhsat')">Gửi Chiến sĩ Cảnh sát biển</a></li>
@@ -227,7 +210,6 @@
   <div id="home-screen" class="screen active">
     <div class="hero">
       <div class="container animate__animated animate__fadeIn">
-        <!-- Logo đã đưa lên intro nên ở đây có thể ẩn hoặc giữ lại tùy ý, code cũ vẫn giữ -->
         <div class="partner-logos animate__animated animate__fadeInDown">
              <img src="https://drive.google.com/thumbnail?id=1QP8DWI4lJECWbmrtAgq8Qhrj8soWazmL&sz=w500" class="partner-logo-img" alt="Logo 1">
              <img src="https://drive.google.com/thumbnail?id=14UNg_aKyxUff_Jofn5-VmuIA0OmpB7Ce&sz=w500" class="partner-logo-img" alt="Logo 2">
@@ -253,7 +235,7 @@
     </div>
     <div class="container py-5">
       <div class="d-flex justify-content-between align-items-end mb-4 px-2">
-         <h3 class="fw-bold text-dark mb-0" style="font-family: 'Playfair Display', serif;"><i class="fas fa-fire text-danger me-2"></i>Ngọn hải đăng</h3>
+         <h3 class="fw-bold text-dark mb-0" style="font-family: 'Playfair Display', serif;"><i class="fas fa-fire text-danger me-2"></i>Ngọn hải đăng (Nổi bật)</h3>
          <a href="javascript:void(0)" onclick="showFeed('all')" class="fw-bold text-primary text-decoration-none">Xem tất cả <i class="fas fa-arrow-right"></i></a>
       </div>
       <div class="row g-4 mb-5" id="home-feed">
@@ -373,7 +355,7 @@
     </div>
   </div>
 
-  <!-- FORM SCREEN -->
+  <!-- FORM SCREEN (ĐÃ CẬP NHẬT SELECT) -->
   <div id="form-screen" class="screen" style="padding-top:100px">
     <div class="container" style="max-width:600px">
       <div class="card border-0 shadow-lg p-4 rounded-4 animate__animated animate__zoomIn">
@@ -384,7 +366,12 @@
         <form id="uForm">
           <input type="text" class="form-control mb-3" id="inp-name" placeholder="Họ tên của bạn" required>
           <div class="row g-2 mb-3">
-            <div class="col-6"><input type="text" class="form-control" id="inp-loc" placeholder="Tỉnh thành" required></div>
+            <div class="col-6">
+                <!-- DROPDOWN TỈNH THÀNH ĐÃ ĐƯỢC THÊM VÀO ĐÂY -->
+                <select class="form-select" id="inp-loc" required>
+                    <option value="" disabled selected>Chọn Tỉnh/Thành...</option>
+                </select>
+            </div>
             <div class="col-6"><input type="text" class="form-control" id="inp-school" placeholder="Trường / Lớp" required></div>
           </div>
           <select class="form-select mb-3" id="inp-to"><option>Chiến sĩ Hải Quân</option><option>Chiến sĩ Cảnh sát biển</option><option>Thư gửi Trường Sa & Nhà giàn DK1</option></select>
@@ -443,48 +430,85 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // --- THAY ĐỔI LINK DƯỚI ĐÂY ---
+    // --- CẤU HÌNH LIÊN KẾT GOOGLE SHEET ---
     const API_URL = "https://script.google.com/macros/s/AKfycbwzHLsHtPYpRFlhOBZ45HCa9sw4ii2CU5yLPW5koBUomjYE--bs7LDui1a8LF-bjNJ2/exec"; 
 
-    // --- JS CHO TRANG CHÀO MỪNG ---
+    // --- CẤU HÌNH DANH SÁCH TỈNH THÀNH & TỪ CẤM ---
+    const LIST_PROVINCES = [
+        "Thành phố Hà Nội", "Thành phố Hồ Chí Minh", "Thành phố Hải Phòng", "Thành phố Đà Nẵng", "Thành phố Cần Thơ",
+        "Tỉnh Hà Giang", "Tỉnh Cao Bằng", "Tỉnh Lai Châu", "Tỉnh Lào Cai", "Tỉnh Tuyên Quang", "Tỉnh Lạng Sơn", "Tỉnh Thái Nguyên", "Tỉnh Sơn La", "Tỉnh Phú Thọ", "Tỉnh Quảng Ninh", "Tỉnh Bắc Ninh",
+        "Tỉnh Hưng Yên", "Tỉnh Ninh Bình", "Tỉnh Thanh Hóa", "Tỉnh Nghệ An", "Tỉnh Hà Tĩnh", "Tỉnh Quảng Trị", "Tỉnh Thừa Thiên Huế",
+        "Tỉnh Quảng Ngãi", "Tỉnh Khánh Hòa", "Tỉnh Gia Lai", "Tỉnh Đắk Lắk",
+        "Tỉnh Tây Ninh", "Tỉnh Đồng Nai", "Tỉnh Đồng Tháp", "Tỉnh An Giang",
+        "Tỉnh Cà Mau", "Tỉnh Điện Biên", "Tỉnh Vĩnh Long", "Tỉnh Lâm Đồng"
+    ];
+
+    const BAD_WORDS_LIST = ["địt", "đụ", "lồn", "cặc", "buồi", "mẹ mày", "con chó", "thằng chó", "ngu", "óc chó", "điếm", "phò", "đĩ", "vãi", "vcl", "vl", "đm", "dm", "dkm", "vkl", "chết", "giết", "đéo", "fuck", "shit", "mày tao", "chửi", "cút"];
+
+    // --- CÁC HÀM XỬ LÝ VĂN BẢN ---
+
+    // 1. Chuẩn hóa Tên
+    function standardizeName(str) {
+        if (!str) return "";
+        str = str.trim().toLowerCase().replace(/\s+/g, ' ');
+        return str.replace(/(^|\s)\S/g, l => l.toUpperCase());
+    }
+
+    // 2. Chuẩn hóa Nội dung
+    function standardizeContent(str) {
+        if (!str) return "";
+        let upperCount = str.replace(/[^A-ZĂÂÁÀẢÃẠ...]/g, "").length; 
+        if (str.length > 10 && (str === str.toUpperCase())) {
+            str = str.toLowerCase();
+        }
+        str = str.charAt(0).toUpperCase() + str.slice(1);
+        return str.replace(/([.!?]\s+)([a-z])/g, (match, separator, char) => {
+            return separator + char.toUpperCase();
+        });
+    }
+
+    // 3. Kiểm tra từ ngữ thô tục
+    function containsBadWords(str) {
+        if (!str) return false;
+        const textCheck = str.toLowerCase();
+        return BAD_WORDS_LIST.some(word => textCheck.includes(word));
+    }
+    
+    // 4. Khởi tạo danh sách tỉnh thành
+    function initProvinces() {
+        const select = document.getElementById('inp-loc');
+        select.innerHTML = '<option value="" disabled selected>Chọn Tỉnh/Thành...</option>';
+        LIST_PROVINCES.forEach(prov => {
+            const opt = document.createElement('option');
+            opt.value = prov;
+            opt.innerText = prov;
+            select.appendChild(opt);
+        });
+    }
+
+    // --- CÁC HÀM HỆ THỐNG ---
+
     function enterSite() {
         const intro = document.getElementById('intro-overlay');
         intro.classList.add('fade-out');
-        // Sau khi hiệu ứng fade-out xong (0.8s), có thể ẩn hẳn nếu muốn
         setTimeout(() => {
-            intro.style.display = 'none';
+            if(intro) intro.style.display = 'none';
         }, 800);
     }
-    // ------------------------------
 
     let posts = [], currId = null;
+    
     const successMessages = [
-    "Cháu yêu quý, giữa bao la biển trời, từng dòng chữ của cháu như một làn gió mới mang theo hơi thở ấm áp của đất liền thổi vào tâm hồn chú. Ở nơi đầu sóng ngọn gió này, khi xung quanh chỉ có nắng cháy và vị mặn mòi của biển, sự quan tâm ngây thơ của cháu chính là nguồn nước mát lành nhất, tiếp thêm sức mạnh để chú chắc tay súng bảo vệ bình yên cho Tổ quốc.",
-  
-  "Giữa mênh mông sóng nước, nhận được lời nhắn gửi của cháu, chú bỗng thấy khoảng cách ngàn dặm như tan biến. Tiếng sóng vỗ ầm ĩ ngoài kia dường như cũng dịu lại, nhường chỗ cho những nốt nhạc vui tươi nhảy múa trong lòng chú khi đọc thư cháu. Cháu hãy yên tâm học tập thật tốt nhé, vì ngoài này đã có các chú canh giữ biển trời.",
-  
-  "Cháu thân yêu, lá thư nhỏ bé cháu gửi đã vượt ngàn con sóng dữ để đến tận tay chú, mang theo cả tình cảm thiêng liêng của hậu phương. Cầm lá thư trên tay, chú thấy như đang được nắm lấy bàn tay nhỏ bé của cháu, thấy được hình ảnh mái trường, con đường làng và những nụ cười bình yên mà các chú đang ngày đêm gìn giữ.",
-  
-  "Cháu yêu quý, những lời cháu viết như những cánh hoa biển rực rỡ nhất nở giữa trùng khơi khô cằn. Nó nhắc nhở chú về lý do vì sao mình lại đứng ở đây, kiên cường dưới nắng gió khắc nghiệt: đó là để bảo vệ những ước mơ xanh và tương lai rạng ngời của những mầm non như cháu.",
-  
-  "Giữa tiếng sóng ngày đêm không ngừng vỗ, lá thư ngắn của cháu như một bản tình ca êm dịu làm vơi đi nỗi nhớ nhà. Chú hứa sẽ là ngọn hải đăng vững chãi nhất, không ngại gian khó, không ngại hy sinh, để cháu và mọi người ở đất liền luôn có những giấc ngủ ngon và những ngày vui trọn vẹn.",
-  
-  "Cháu thân yêu, lá thư nhỏ bé nhưng chứa đựng tình cảm lớn lao tựa như đại dương bao la ngoài kia. Mỗi nét chữ của cháu là một lời động viên, nhắc nhở chú rằng dù ở nơi đảo xa hẻo lánh, chú không bao giờ cô đơn vì luôn có những trái tim bé nhỏ ở đất liền hướng về.",
-  
-  "Cháu yêu quý, trong từng nét chữ của cháu, chú thấy được niềm tin yêu trong sáng và lòng tự hào dân tộc đang lớn dần. Hãy nuôi dưỡng ước mơ ấy cháu nhé! Chú sẽ gom những ánh sao trời đẹp nhất trên biển đêm nay để gửi vào trong giấc mơ của cháu.",
-  
-  "Giữa biển khơi xanh thẳm, lời nhắn gửi của cháu đến với chú như cánh chim hải âu mang tin vui về tổ ấm. Cháu biết không, chính sự hồn nhiên và chăm ngoan của cháu là hậu phương vững chắc nhất, giúp các chú vượt qua mọi bão tố phong ba để hoàn thành nhiệm vụ.",
-  
-  "Cháu thân yêu, đọc những dòng chữ trong trẻo của cháu, chú dường như ngửi thấy mùi hương lúa mới, mùi khói bếp thân quen của quê nhà. Cảm ơn cháu đã mang cả một bầu trời ký ức tươi đẹp đến nơi đảo xa, để chú thấy quê hương luôn ở ngay bên cạnh mình, trong lồng ngực trái.",
-  
-  "Cháu yêu quý, những lời chúc và sự quan tâm của cháu là món quà quý giá hơn bất kỳ châu báu nào dưới đáy đại dương. Chú sẽ cất giữ lá thư này trong túi áo ngực, ngay sát trái tim mình, để mỗi nhịp đập của chú đều có thêm sức mạnh từ tình yêu thương của cháu."
+        "Cảm ơn cháu! Những dòng chữ này sẽ là ngọn lửa ấm áp giữa biển khơi.",
+        "Lá thư đã được chuyển đi. Chú bộ đội sẽ rất vui khi nhận được tình cảm của cháu.",
+        "Biển đảo quê hương thêm gần lại nhờ những cánh thư yêu thương này.",
+        "Tuyệt vời! Một cánh chim hải âu vừa mang tin nhắn của cháu ra đảo xa."
     ];
 
     async function callAPI(action, payload = null, method = 'GET') {
         try {
             let url = API_URL;
             let options = { method: method };
-            
             if (method === 'GET') {
                 url += `?action=${action}`;
                 if (payload) for (let k in payload) url += `&${k}=${encodeURIComponent(payload[k])}`;
@@ -492,14 +516,9 @@
                 options.body = JSON.stringify({ action, ...payload });
                 options.headers = { "Content-Type": "text/plain;charset=utf-8" }; 
             }
-
             const res = await fetch(url, options);
-            const data = await res.json();
-            return data;
-        } catch (e) {
-            console.error("API Error:", e);
-            throw e;
-        }
+            return await res.json();
+        } catch (e) { console.error("API Error:", e); throw e; }
     }
 
     function removeVietnameseTones(str) {
@@ -515,7 +534,10 @@
         return str.toLowerCase();
     }
 
-    window.onload = () => { initData(); };
+    window.onload = () => { 
+        initData(); 
+        initProvinces(); 
+    };
     
     async function initData() {
         try {
@@ -543,7 +565,8 @@
       renderRankings(posts);
       let popularPosts = [...posts].sort((a,b) => b.sotim - a.sotim).slice(0, 8); 
       render(popularPosts, 'home-feed'); 
-      render(posts, 'full-feed');
+      let sortedAll = [...posts].sort((a,b) => b.sotim - a.sotim);
+      render(sortedAll, 'full-feed');
     }
 
     function renderRankings(data) {
@@ -583,14 +606,19 @@
     function showFeed(type){ 
         show('feed-screen'); 
         document.getElementById('search-name').value = '';
-        document.getElementById('search-prov').value = '';
+        document.getElementById('search-prov').value = ''; 
         document.getElementById('search-to').value = '';
-        let filtered = posts, title = "Tất cả thư";
-        if(type === 'popular') { filtered = [...posts].sort((a,b)=>b.sotim-a.sotim); title = "Thư Nổi Bật"; }
-        else if(type === 'haiquan') { document.getElementById('search-to').value = "Hải Quân"; filtered = posts.filter(p=>p.nguoinhan.includes("Hải Quân")); title = "Thư Gửi chiến Sĩ Hải Quân"; }
-        else if(type === 'canhsat') { document.getElementById('search-to').value = "Cảnh sát"; filtered = posts.filter(p=>p.nguoinhan.includes("Cảnh sát")); title = "Thư Gửi chiến Sĩ Cảnh Sát Biển"; }
-        else if(type === 'truongsa') { document.getElementById('search-to').value = "Trường Sa"; filtered = posts.filter(p=>p.nguoinhan.includes("Trường Sa") || p.nguoinhan.includes("DK1")); title = "Thư Gửi Trường Sa & Nhà Giàn DK1"; }
-        else if(type === 'video') { filtered = posts.filter(p=>p.videoLink); title = "Video Clip"; }
+        
+        let filtered = [...posts]; 
+        let title = "Tất cả thư";
+
+        if(type === 'popular') { title = "Thư Nổi Bật (Nhiều tim nhất)"; }
+        else if(type === 'haiquan') { document.getElementById('search-to').value = "Hải Quân"; filtered = filtered.filter(p=>p.nguoinhan.includes("Hải Quân")); title = "Thư Gửi chiến Sĩ Hải Quân"; }
+        else if(type === 'canhsat') { document.getElementById('search-to').value = "Cảnh sát"; filtered = filtered.filter(p=>p.nguoinhan.includes("Cảnh sát")); title = "Thư Gửi chiến Sĩ Cảnh Sát Biển"; }
+        else if(type === 'truongsa') { document.getElementById('search-to').value = "Trường Sa"; filtered = filtered.filter(p=>p.nguoinhan.includes("Trường Sa") || p.nguoinhan.includes("DK1")); title = "Thư Gửi Trường Sa & Nhà Giàn DK1"; }
+        else if(type === 'video') { filtered = filtered.filter(p=>p.videoLink); title = "Video Clip"; }
+
+        filtered.sort((a, b) => parseInt(b.sotim) - parseInt(a.sotim));
         document.getElementById('feed-title').innerText = title; 
         render(filtered, 'full-feed'); 
     }
@@ -599,7 +627,8 @@
         const nameVal = removeVietnameseTones(document.getElementById('search-name').value);
         const provVal = removeVietnameseTones(document.getElementById('search-prov').value);
         const toVal = document.getElementById('search-to').value; 
-        const result = posts.filter(p => {
+        
+        let result = posts.filter(p => {
             const matchesName = removeVietnameseTones(p.hoten).includes(nameVal);
             const matchesProv = removeVietnameseTones(p.tinhthanh).includes(provVal);
             let matchesTo = true;
@@ -609,6 +638,9 @@
             }
             return matchesName && matchesProv && matchesTo;
         });
+
+        result.sort((a, b) => parseInt(b.sotim) - parseInt(a.sotim));
+
         if (result.length > 0) { document.getElementById('no-result').classList.add('d-none'); render(result, 'full-feed'); } 
         else { document.getElementById('full-feed').innerHTML = ''; document.getElementById('no-result').classList.remove('d-none'); }
     }
@@ -625,32 +657,75 @@
         if(posts.length) show('feed-screen'); else goHome();
     }
 
+    // --- HÀM XỬ LÝ MEDIA ĐÃ ĐƯỢC CHỈNH SỬA (SANDBOX) ---
     function getMedia(p, isDetail = false) {
         let html = '';
-        const getId = (link) => { if(!link) return null; const m = link.match(/[-\w]{25,}/); return m ? m[0] : null; };
         
+        // Hàm lấy ID từ link Google Drive
+        const getDriveId = (link) => { 
+            if(!link) return null; 
+            const m = link.match(/[-\w]{25,}/); 
+            return m ? m[0] : null; 
+        };
+
+        // Hàm lấy ID Youtube
+        const getYtId = (link) => {
+            if(!link) return null;
+            const regExp = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))((\w|-){11})(?:\S+)?$/;
+            const match = link.match(regExp);
+            return (match && match[1]) ? match[1] : null;
+        }
+        
+        // Cấu hình SANDBOX: Cho phép chạy script, hiển thị, nhưng KHÔNG cho phép mở popup hay tab mới
+        const sandboxAttr = 'sandbox="allow-scripts allow-same-origin allow-presentation"';
+
+        // 1. ƯU TIÊN KIỂM TRA LINK VIDEO (Youtube/Drive dán vào ô Link Video)
         if(p.videoLink) {
-            const ytId = p.videoLink.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/);
-            const driveId = p.videoLink.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if(ytId && ytId[1]) {
-                html = `<div class="video-container ratio ratio-16x9 ${isDetail?'mb-4':''}"><iframe src="https://www.youtube.com/embed/${ytId[1]}" allowfullscreen></iframe></div>`;
-            } else if (driveId && driveId[1]) {
-                html = `<div class="video-container ratio ratio-16x9 ${isDetail?'mb-4':''}"><iframe src="https://drive.google.com/file/d/${driveId[1]}/preview" allowfullscreen></iframe></div>`;
+            const ytId = getYtId(p.videoLink);
+            const driveId = getDriveId(p.videoLink);
+
+            if(ytId) {
+                // Youtube: Thêm sandbox và các tham số ẩn logo/điều hướng
+                html = `<div class="video-container" onclick="event.stopPropagation()">
+                            <iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0" 
+                            ${sandboxAttr} allowfullscreen></iframe>
+                        </div>`;
+            } else if (driveId) {
+                // Drive Link: Thêm sandbox để chặn nút Pop-out góc phải
+                html = `<div class="video-container" onclick="event.stopPropagation()">
+                            <iframe src="https://drive.google.com/file/d/${driveId}/preview" 
+                            ${sandboxAttr} allowfullscreen></iframe>
+                        </div>`;
             }
-        } else if(p.linkfile) {
-             const id = getId(p.linkfile);
+        } 
+        // 2. NẾU KHÔNG CÓ LINK VIDEO -> KIỂM TRA FILE UPLOAD
+        else if(p.linkfile) {
+             const id = getDriveId(p.linkfile);
              if(id) {
                 const isImage = p.loaifile && p.loaifile.toLowerCase().includes('image');
-                if (isDetail) {
-                     if (isImage) {
+                const isVideo = p.loaifile && p.loaifile.toLowerCase().includes('video');
+                
+                if (isVideo) {
+                    // Video tải lên (Drive): Thêm sandbox
+                    html = `<div class="video-container" onclick="event.stopPropagation()">
+                                <iframe src="https://drive.google.com/file/d/${id}/preview" 
+                                ${sandboxAttr} allowfullscreen></iframe>
+                            </div>`;
+                } else if (isImage) {
+                    if(isDetail) {
                         html = `<div class="detail-image-box mb-3"><img src="https://drive.google.com/thumbnail?id=${id}&sz=w1600"></div>`;
-                     } else {
-                        html = `<div class="pdf-container mb-3"><iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay"></iframe></div>`;
-                     }
-                } else {
-                     html = `<div class="media-box"><img src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; object-fit:cover; max-height:200px"></div>`;
+                    } else {
+                        html = `<div class="media-box"><img src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; object-fit:cover; max-height:200px"></div>`;
+                    }
+                } else if (isDetail) {
+                    // PDF: Vẫn giữ nguyên hoặc thêm sandbox nếu muốn chặn in ấn/tải về tab mới
+                    html = `<div class="pdf-container mb-3"><iframe src="https://drive.google.com/file/d/${id}/preview" ${sandboxAttr}></iframe></div>`;
                 }
              }
+        }
+        
+        if(isDetail && html.includes('video-container')) {
+            html = html.replace('video-container', 'video-container mb-4');
         }
         return html;
     }
@@ -669,7 +744,11 @@
                         <div class="avatar">${p.hoten ? p.hoten[0] : '?'}</div>
                         <div class="user-info"><div class="user-name">${p.hoten}</div><div class="user-meta"><span>${p.truonglop}</span><i class="fas fa-circle dot-sep"></i><span><i class="fas fa-map-marker-alt me-1"></i>${p.tinhthanh}</span></div></div>
                     </div>
-                    <div class="p-3 flex-grow-1"><span class="badge-custom"><i class="far fa-paper-plane me-1"></i>${p.nguoinhan}</span><div class="handwritten-text" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.noidung}</div>${getMedia(p)}</div>
+                    <div class="p-3 flex-grow-1">
+                        <span class="badge-custom"><i class="far fa-paper-plane me-1"></i>${p.nguoinhan}</span>
+                        <div class="handwritten-text" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.noidung}</div>
+                        ${getMedia(p)}
+                    </div>
                     <div class="p-3 bg-light d-flex justify-content-between align-items-center mt-auto">
                         <button class="btn btn-sm bg-white shadow-sm rounded-pill text-danger border fw-bold btn-like-wrapper-${p.id}" onclick="event.stopPropagation();like('${p.id}')"><i class="fas fa-heart"></i> <span class="like-cnt-${p.id}">${p.sotim}</span></button>
                         <small class="text-primary fw-bold">Chi tiết <i class="fas fa-arrow-right"></i></small>
@@ -714,8 +793,17 @@
     }
 
     async function subCmt() {
-        const n = document.getElementById('c-name').value, c = document.getElementById('c-text').value;
+        let n = document.getElementById('c-name').value;
+        const c = document.getElementById('c-text').value;
         if(!n || !c) return showNotify('Vui lòng nhập đủ tên và nội dung!');
+        
+        // KIỂM TRA TỪ CẤM TRONG COMMENT
+        if (containsBadWords(n) || containsBadWords(c)) {
+            return showNotify("Nội dung bình luận chứa từ ngữ không phù hợp.", "error");
+        }
+        
+        n = standardizeName(n);
+
         const box = document.getElementById('cmt-list');
         const fakeCmt = `<div class="d-flex mb-3 animate__animated animate__fadeIn"><div class="avatar me-3 shadow-sm" style="width:40px;height:40px;font-size:1rem">${n[0]}</div><div class="bg-white border p-3 rounded-4 w-100 shadow-sm"><div class="fw-bold text-primary mb-1">${n}</div><div class="text-dark">${c}</div></div></div>`;
         if(box.innerHTML.includes('người đầu tiên')) box.innerHTML = '';
@@ -727,24 +815,53 @@
 
     async function sendData() {
         const b = document.getElementById('btn-send'), old = b.innerHTML; b.innerHTML='Đang gửi...'; b.disabled=true;
-        const d = { hoten:document.getElementById('inp-name').value, tinhthanh:document.getElementById('inp-loc').value, truonglop:document.getElementById('inp-school').value, nguoinhan:document.getElementById('inp-to').value, noidung:document.getElementById('inp-msg').value, videoLink:document.getElementById('inp-vid').value };
-        if(!d.hoten || !d.noidung) { showNotify('Vui lòng nhập đủ tên và nội dung!'); b.innerHTML=old; b.disabled=false; return; }
         
-        const fileInp = document.getElementById('inp-file').files[0];
-        
-        const processUpload = async (fileData = null) => {
-             const payload = { ...d, fileName: fileData ? fileData.name : null, fileType: fileData ? fileData.type : null, fileData: fileData ? fileData.data : null };
-             const r = await callAPI('upload', payload, 'POST');
-             if(r.success) { showSuccess(); initData(); } 
-             else { showNotify('Lỗi: '+r.error, 'error'); b.innerHTML=old; b.disabled=false; }
-        };
+        try {
+            let rawHoten = document.getElementById('inp-name').value;
+            let rawTinhthanh = document.getElementById('inp-loc').value; 
+            let rawTruonglop = document.getElementById('inp-school').value;
+            let rawNoidung = document.getElementById('inp-msg').value;
 
-        if(fileInp) { 
-            const r = new FileReader(); 
-            r.onload = e => processUpload({ name: fileInp.name, type: fileInp.type, data: e.target.result.split(',')[1] }); 
-            r.readAsDataURL(fileInp); 
-        } else {
-            processUpload(null);
+            if(!rawHoten || !rawNoidung || !rawTinhthanh) { 
+                showNotify('Vui lòng điền tên, chọn tỉnh thành và viết nội dung!'); 
+                b.innerHTML=old; b.disabled=false; 
+                return; 
+            }
+
+            if (containsBadWords(rawHoten) || containsBadWords(rawNoidung) || containsBadWords(rawTruonglop)) {
+                b.innerHTML = old; b.disabled = false;
+                return showNotify("Phát hiện từ ngữ không phù hợp trong thư. Hãy sử dụng ngôn từ văn minh!", "error");
+            }
+
+            const d = { 
+                hoten: standardizeName(rawHoten), 
+                tinhthanh: rawTinhthanh, 
+                truonglop: standardizeName(rawTruonglop), 
+                nguoinhan: document.getElementById('inp-to').value, 
+                noidung: standardizeContent(rawNoidung),
+                videoLink: document.getElementById('inp-vid').value 
+            };
+            
+            const fileInp = document.getElementById('inp-file').files[0];
+            
+            const processUpload = async (fileData = null) => {
+                const payload = { ...d, fileName: fileData ? fileData.name : null, fileType: fileData ? fileData.type : null, fileData: fileData ? fileData.data : null };
+                const r = await callAPI('upload', payload, 'POST');
+                if(r.success) { showSuccess(); initData(); } 
+                else { showNotify('Lỗi: '+r.error, 'error'); b.innerHTML=old; b.disabled=false; }
+            };
+
+            if(fileInp) { 
+                const r = new FileReader(); 
+                r.onload = e => processUpload({ name: fileInp.name, type: fileInp.type, data: e.target.result.split(',')[1] }); 
+                r.readAsDataURL(fileInp); 
+            } else {
+                processUpload(null);
+            }
+        } catch (error) {
+            console.error(error);
+            showNotify('Có lỗi xảy ra, vui lòng thử lại!', 'error');
+            b.innerHTML=old; b.disabled=false;
         }
     }
   </script>
