@@ -450,13 +450,15 @@
     // 1. Chuẩn hóa Tên
     function standardizeName(str) {
         if (!str) return "";
-        str = str.trim().toLowerCase().replace(/\s+/g, ' ');
+        // Ép kiểu thành string để tránh lỗi nếu nhập số
+        str = String(str).trim().toLowerCase().replace(/\s+/g, ' ');
         return str.replace(/(^|\s)\S/g, l => l.toUpperCase());
     }
 
     // 2. Chuẩn hóa Nội dung
     function standardizeContent(str) {
         if (!str) return "";
+        str = String(str); // Ép kiểu string
         let upperCount = str.replace(/[^A-ZĂÂÁÀẢÃẠ...]/g, "").length; 
         if (str.length > 10 && (str === str.toUpperCase())) {
             str = str.toLowerCase();
@@ -470,7 +472,7 @@
     // 3. Kiểm tra từ ngữ thô tục
     function containsBadWords(str) {
         if (!str) return false;
-        const textCheck = str.toLowerCase();
+        const textCheck = String(str).toLowerCase();
         return BAD_WORDS_LIST.some(word => textCheck.includes(word));
     }
     
@@ -537,6 +539,9 @@
     }
 
     function removeVietnameseTones(str) {
+        if (!str) return ""; // Kiểm tra rỗng
+        str = String(str);   // FIX LỖI: Ép kiểu thành string trước khi xử lý
+        
         str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); 
         str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e"); 
         str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i"); 
@@ -587,8 +592,10 @@
     function renderRankings(data) {
         let provCounts = {}, schoolCounts = {};
         data.forEach(p => {
-            let pr = p.tinhthanh ? p.tinhthanh.trim() : "Khác";
-            let sc = p.truonglop ? p.truonglop.trim() : "Khác";
+            // FIX LỖI Ở ĐÂY: Thêm String(...) để chuyển số thành chữ trước khi trim()
+            let pr = p.tinhthanh ? String(p.tinhthanh).trim() : "Khác";
+            let sc = p.truonglop ? String(p.truonglop).trim() : "Khác";
+            
             if(pr && pr.toLowerCase() !== 'khác') provCounts[pr] = (provCounts[pr] || 0) + 1;
             if(sc && sc.toLowerCase() !== 'khác') schoolCounts[sc] = (schoolCounts[sc] || 0) + 1;
         });
@@ -644,8 +651,9 @@
         const toVal = document.getElementById('search-to').value; 
         
         let result = posts.filter(p => {
-            const matchesName = removeVietnameseTones(p.hoten).includes(nameVal);
-            const matchesProv = removeVietnameseTones(p.tinhthanh).includes(provVal);
+            // FIX: Chuyển dữ liệu thành String trước khi xử lý
+            const matchesName = removeVietnameseTones(String(p.hoten)).includes(nameVal);
+            const matchesProv = removeVietnameseTones(String(p.tinhthanh)).includes(provVal);
             let matchesTo = true;
             if (toVal) {
                 if(toVal === "Trường Sa") matchesTo = p.nguoinhan.includes("Trường Sa") || p.nguoinhan.includes("DK1");
@@ -717,8 +725,8 @@
         else if(p.linkfile) {
              const id = getDriveId(p.linkfile);
              if(id) {
-                const isImage = p.loaifile && p.loaifile.toLowerCase().includes('image');
-                const isVideo = p.loaifile && p.loaifile.toLowerCase().includes('video');
+                const isImage = p.loaifile && String(p.loaifile).toLowerCase().includes('image');
+                const isVideo = p.loaifile && String(p.loaifile).toLowerCase().includes('video');
                 
                 if (isVideo) {
                     // Video tải lên (Drive): Thêm sandbox
@@ -756,7 +764,7 @@
             <div class="col-md-6 col-lg-3 animate__animated animate__fadeIn">
                 <div class="post-card" style="cursor: pointer;" onclick="detail('${p.id}')">
                     <div class="post-header">
-                        <div class="avatar">${p.hoten ? p.hoten[0] : '?'}</div>
+                        <div class="avatar">${p.hoten ? String(p.hoten)[0] : '?'}</div>
                         <div class="user-info"><div class="user-name">${p.hoten}</div><div class="user-meta"><span>${p.truonglop}</span><i class="fas fa-circle dot-sep"></i><span><i class="fas fa-map-marker-alt me-1"></i>${p.tinhthanh}</span></div></div>
                     </div>
                     <div class="p-3 flex-grow-1">
