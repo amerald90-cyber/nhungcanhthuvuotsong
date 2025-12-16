@@ -144,6 +144,12 @@
     .pdf-container { position: relative; width: 100%; height: 85vh; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .pdf-container iframe { width: 100%; height: 100%; border: none; }
     
+    /* PDF PREVIEW CARD STYLE */
+    .pdf-preview-box {
+        background: #f1f5f9; border-radius: 12px; overflow: hidden; margin-top: 12px; height: 200px; position: relative; border: 1px solid #e2e8f0;
+    }
+    .pdf-preview-box iframe { width: 100%; height: 100%; border: none; pointer-events: none; }
+
     /* --- CSS SỬA LỖI VIDEO VỪA KHUNG & NỀN ĐEN CHUẨN --- */
     .video-container {
         position: relative;
@@ -170,25 +176,6 @@
     .about-header { height: 200px; background: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=2600') center/cover; position: relative; display: flex; align-items: center; justify-content: center; }
     .about-header-text { text-shadow: 0 2px 10px rgba(0,0,0,0.6); z-index: 2; padding: 0 20px; text-align: center; font-size: 2rem; }
 
-    /* CSS CHO NÚT XOAY TRÊN CARD */
-    .btn-rotate-card {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(255, 255, 255, 0.8);
-        border: none;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        color: #333;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 20;
-        transition: 0.2s;
-    }
-    .btn-rotate-card:hover { background: white; color: var(--primary); transform: scale(1.1); }
   </style>
 </head>
 <body>
@@ -309,7 +296,7 @@
             <div class="col-md-4">
                 <div class="input-group">
                     <span class="input-group-text border-0 bg-transparent ps-3"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" id="search-name" class="form-control form-control-search border-start-0 ps-0" placeholder="Tìm theo tên người gửi..." onkeyup="filterLibrary()">
+                    <input type="text" id="search-name" class="form-control form-control-search border-start-0 ps-0" placeholder="Tìm tên, trường, lớp..." onkeyup="filterLibrary()">
                 </div>
             </div>
             <div class="col-md-4">
@@ -390,7 +377,7 @@
     </div>
   </div>
 
-  <!-- FORM SCREEN (ĐÃ CẬP NHẬT SELECT) -->
+  <!-- FORM SCREEN (ĐÃ CẬP NHẬT SELECT VÀ INPUT LỚP) -->
   <div id="form-screen" class="screen" style="padding-top:100px">
     <div class="container" style="max-width:600px">
       <div class="card border-0 shadow-lg p-4 rounded-4 animate__animated animate__zoomIn">
@@ -401,13 +388,20 @@
         <form id="uForm">
           <input type="text" class="form-control mb-3" id="inp-name" placeholder="Họ tên của bạn" required>
           <div class="row g-2 mb-3">
-            <div class="col-6">
-                <!-- DROPDOWN TỈNH THÀNH ĐÃ ĐƯỢC THÊM VÀO ĐÂY -->
+            <div class="col-5">
+                <!-- DROPDOWN TỈNH THÀNH -->
                 <select class="form-select" id="inp-loc" required>
                     <option value="" disabled selected>Chọn Tỉnh/Thành...</option>
                 </select>
             </div>
-            <div class="col-6"><input type="text" class="form-control" id="inp-school" placeholder="Trường / Lớp" required></div>
+            <!-- Ô NHẬP TÊN TRƯỜNG -->
+            <div class="col-7">
+                <input type="text" class="form-control" id="inp-school" placeholder="Tên Trường (VD: Ninh Khang)" required>
+            </div>
+            <!-- Ô NHẬP LỚP RIÊNG BIỆT -->
+            <div class="col-12 mt-2">
+                 <input type="text" class="form-control" id="inp-class" placeholder="Lớp (VD: 5A, 9B)" required>
+            </div>
           </div>
           <select class="form-select mb-3" id="inp-to"><option>Chiến sĩ Hải Quân</option><option>Chiến sĩ Cảnh sát biển</option><option>Thư gửi Trường Sa & Nhà giàn DK1</option></select>
           <textarea class="form-control mb-3" id="inp-msg" rows="5" placeholder="Lời nhắn gửi..." required></textarea>
@@ -487,18 +481,43 @@
         return str.replace(/(^|\s)\S/g, l => l.toUpperCase());
     }
 
+    // HÀM CHUẨN HÓA TÊN TRƯỜNG THÔNG MINH
+    function standardizeSchool(str) {
+        if (!str) return "";
+        str = String(str).trim();
+        
+        // 1. Tự động thay thế "TH" thành "Tiểu học" nếu người dùng viết tắt
+        str = str.replace(/\b(?:th|t\.h)\b/gi, "Tiểu học"); 
+
+        // 2. Viết hoa chữ cái đầu mỗi từ
+        str = str.toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
+        
+        // 3. Kiểm tra xem đã có chữ "Trường" ở đầu chưa, nếu chưa thì thêm vào
+        if (!str.toLowerCase().startsWith("trường")) {
+            str = "Trường " + str;
+        }
+
+        // 4. Nếu chỉ nhập tên địa danh (Vd: "Ninh Khang") mà thiếu cấp học, tự động thêm "Tiểu học" (Theo yêu cầu)
+        // Logic: Nếu không chứa "Tiểu Học", "THCS", "THPT", "Mầm Non" -> Thêm "Tiểu Học"
+        if (!str.toLowerCase().includes("tiểu học") && 
+            !str.toLowerCase().includes("thcs") && 
+            !str.toLowerCase().includes("thpt") && 
+            !str.toLowerCase().includes("mầm non")) {
+             str = str.replace("Trường", "Trường Tiểu học");
+        }
+
+        return str;
+    }
+
     function standardizeContent(str) {
         if (!str) return "";
         str = String(str);
         
-        // CẢI TIẾN: Kiểm tra nếu viết hoa quá nhiều (> 5 ký tự và viết hoa hết) thì chuyển về chữ thường
-        // Ví dụ: "CON CHÚC CÁC CHÚ" -> "con chúc các chú" -> sau đó hàm dưới sẽ viết hoa đầu câu
         if (str.length > 5 && str === str.toUpperCase()) {
             str = str.toLowerCase();
         }
 
         let upperCount = str.replace(/[^A-ZĂÂÁÀẢÃẠ...]/g, "").length; 
-        // Vẫn giữ logic cũ
         if (str.length > 10 && (str === str.toUpperCase())) {
             str = str.toLowerCase();
         }
@@ -534,10 +553,8 @@
     }
 
     let posts = [], currId = null;
-    let currentRotation = 0; // Biến lưu góc xoay ảnh chi tiết
-    let sessionLikes = {}; // Lưu số lượt like tạm thời
-    
-    // Lưu trạng thái xoay cho từng bài viết ở màn hình ngoài
+    let currentRotation = 0; 
+    let sessionLikes = {}; 
     let cardRotations = {};
 
     const successMessages = [
@@ -629,7 +646,20 @@
         let provCounts = {}, schoolCounts = {};
         data.forEach(p => {
             let pr = p.tinhthanh ? String(p.tinhthanh).trim() : "Khác";
-            let sc = p.truonglop ? String(p.truonglop).trim() : "Khác";
+            
+            // XỬ LÝ: CHỈ LẤY TÊN TRƯỜNG ĐỂ THỐNG KÊ (BỎ QUA LỚP)
+            // Dữ liệu dạng: "Lớp 5A - Trường Tiểu học Ninh Khang" -> Lấy "Trường Tiểu học Ninh Khang"
+            let rawSc = p.truonglop ? String(p.truonglop).trim() : "Khác";
+            let sc = rawSc;
+            
+            if (rawSc.includes(" - ")) {
+                let parts = rawSc.split(" - ");
+                if (parts.length > 1) sc = parts[1].trim(); 
+            } else if (rawSc.includes("-")) {
+                 let parts = rawSc.split("-");
+                 if (parts.length > 1) sc = parts[1].trim();
+            }
+
             if(pr && pr.toLowerCase() !== 'khác') provCounts[pr] = (provCounts[pr] || 0) + 1;
             if(sc && sc.toLowerCase() !== 'khác') schoolCounts[sc] = (schoolCounts[sc] || 0) + 1;
         });
@@ -682,8 +712,10 @@
         const nameVal = removeVietnameseTones(document.getElementById('search-name').value);
         const provVal = removeVietnameseTones(document.getElementById('search-prov').value);
         const toVal = document.getElementById('search-to').value; 
+        
         let result = posts.filter(p => {
-            const matchesName = removeVietnameseTones(String(p.hoten)).includes(nameVal);
+            const combinedText = removeVietnameseTones(String(p.hoten) + " " + String(p.truonglop));
+            const matchesName = combinedText.includes(nameVal);
             const matchesProv = removeVietnameseTones(String(p.tinhthanh)).includes(provVal);
             let matchesTo = true;
             if (toVal) {
@@ -730,7 +762,6 @@
              if(id) {
                 const isImage = p.loaifile && String(p.loaifile).toLowerCase().includes('image');
                 const isVideo = p.loaifile && String(p.loaifile).toLowerCase().includes('video');
-                // Tính xem đây có phải PDF không? (Nếu không phải ảnh/video thì mặc định PDF)
                 const isPDF = !isImage && !isVideo; 
                 
                 if (isVideo) {
@@ -744,19 +775,15 @@
                                     <button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="rotateImg()"><i class="fas fa-sync-alt me-1"></i> Xoay ảnh</button>
                                 </div>`;
                     } else {
-                        // MEDIA BOX TRÊN CARD: Thêm nút xoay
+                        // SỬA: BỎ NÚT XOAY TRÊN ẢNH
                         html = `<div class="media-box">
-                                    <button class="btn-rotate-card shadow-sm" onclick="event.stopPropagation(); rotatePostImg('${p.id}')" title="Xoay ảnh"><i class="fas fa-sync-alt"></i></button>
                                     <img id="img-${p.id}" src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s ease;">
                                 </div>`;
                     }
                 } else if (isPDF) {
-                    // XỬ LÝ PDF:
                     if (isDetail) {
-                         // Bên trong chi tiết: Hiện PDF đầy đủ (iframe)
                         html = `<div class="pdf-container mb-3"><iframe src="https://drive.google.com/file/d/${id}/preview" ${sandboxAttr}></iframe></div>`;
                     } else {
-                        // Bên ngoài (Card): Hiện THUMBNAIL (ảnh) để đẹp như ảnh
                         html = `<div class="media-box">
                                     <img src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; height:100%; object-fit:cover;">
                                 </div>`;
@@ -768,7 +795,6 @@
         return html;
     }
 
-    // --- HÀM XOAY ẢNH CHI TIẾT ---
     function rotateImg() {
         const img = document.getElementById('main-detail-img');
         if(img) {
@@ -780,7 +806,6 @@
         }
     }
 
-    // --- HÀM MỚI: XOAY ẢNH NGAY TRÊN CARD ---
     function rotatePostImg(postId) {
         const img = document.getElementById(`img-${postId}`);
         if(img) {
@@ -789,9 +814,7 @@
             if (cardRotations[postId] >= 360) cardRotations[postId] = 0;
             
             let scale = 1;
-            // Thu nhỏ xíu nếu xoay ngang để không bị xấu trong khung
             if (cardRotations[postId] % 180 !== 0) { scale = 0.75; }
-            
             img.style.transform = `rotate(${cardRotations[postId]}deg) scale(${scale})`;
         }
     }
@@ -800,8 +823,20 @@
         const div = document.getElementById(divId); div.innerHTML = '';
         if(!lst.length) { if(divId === 'home-feed') div.innerHTML='<div class="text-center w-100 text-muted py-5">Chưa có bài viết nào.</div>'; return; }
         lst.forEach(p => {
-            // Chuẩn hóa nội dung hiển thị trên thẻ (viết hoa -> thường)
             let displayContent = standardizeContent(p.noidung);
+            
+            // XÁC ĐỊNH XEM CÓ ẢNH ĐỂ XOAY KHÔNG
+            // Chỉ hiện nút xoay nếu là file ảnh
+            let showRotateBtn = false;
+            if (p.linkfile && (String(p.loaifile).toLowerCase().includes('image'))) {
+                showRotateBtn = true;
+            }
+
+            let rotateBtnHTML = '';
+            if (showRotateBtn) {
+                // SỬA: ĐẶT NÚT XOAY Ở FOOTER
+                rotateBtnHTML = `<button class="btn btn-sm btn-light border rounded-circle text-muted mx-2" onclick="event.stopPropagation(); rotatePostImg('${p.id}')" title="Xoay ảnh"><i class="fas fa-sync-alt"></i></button>`;
+            }
             
             div.innerHTML += `
             <div class="col-md-6 col-lg-3 animate__animated animate__fadeIn">
@@ -817,7 +852,11 @@
                     </div>
                     <div class="p-3 bg-light d-flex justify-content-between align-items-center mt-auto">
                         <button class="btn btn-sm bg-white shadow-sm rounded-pill text-danger border fw-bold btn-like-wrapper-${p.id}" onclick="event.stopPropagation();like('${p.id}')"><i class="fas fa-heart"></i> <span class="like-cnt-${p.id}">${p.sotim}</span></button>
-                        <small class="text-primary fw-bold">Chi tiết <i class="fas fa-arrow-right"></i></small>
+                        
+                        <div class="d-flex align-items-center">
+                            ${rotateBtnHTML}
+                            <small class="text-primary fw-bold ms-2">Chi tiết <i class="fas fa-arrow-right"></i></small>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -829,7 +868,6 @@
         currId = id; const p = posts.find(x=>x.id==id); if(!p) return;
         document.getElementById('mainNav').classList.add('hidden');
         
-        // Chuẩn hóa nội dung hiển thị trong chi tiết
         let displayContent = standardizeContent(p.noidung);
 
         document.getElementById('detail-cont').innerHTML = `
@@ -848,13 +886,11 @@
     async function like(id) {
         const p = posts.find(x => x.id == id);
         if(p) {
-            // Kiểm tra giới hạn 20 like
             if(!sessionLikes[id]) sessionLikes[id] = 0;
             if(sessionLikes[id] >= 20) {
                 showNotify("Bạn chỉ được thả tim tối đa 20 lần cho bài viết này!", "warning");
                 return;
             }
-            
             sessionLikes[id]++;
             p.sotim = Number(p.sotim) + 1;
             document.querySelectorAll(`.like-cnt-${id}`).forEach(el => el.innerText = p.sotim);
@@ -877,7 +913,6 @@
         let n = document.getElementById('c-name').value;
         const c = document.getElementById('c-text').value;
         if(!n || !c) return showNotify('Vui lòng nhập đủ tên và nội dung!');
-        // GIỮ NGUYÊN KIỂM TRA TỪ CẤM Ở BÌNH LUẬN
         if (containsBadWords(n) || containsBadWords(c)) { return showNotify("Nội dung bình luận chứa từ ngữ không phù hợp.", "error"); }
         n = standardizeName(n);
         const box = document.getElementById('cmt-list');
@@ -893,17 +928,22 @@
         try {
             let rawHoten = document.getElementById('inp-name').value;
             let rawTinhthanh = document.getElementById('inp-loc').value; 
-            let rawTruonglop = document.getElementById('inp-school').value;
+            
+            // LẤY DỮ LIỆU TỪ 2 Ô: TRƯỜNG VÀ LỚP
+            let rawSchoolName = document.getElementById('inp-school').value;
+            let rawClassName = document.getElementById('inp-class').value;
             let rawNoidung = document.getElementById('inp-msg').value;
 
-            if(!rawHoten || !rawNoidung || !rawTinhthanh) { showNotify('Vui lòng điền tên, chọn tỉnh thành và viết nội dung!'); b.innerHTML=old; b.disabled=false; return; }
+            if(!rawHoten || !rawNoidung || !rawTinhthanh || !rawSchoolName) { showNotify('Vui lòng điền tên, chọn tỉnh thành, tên trường và viết nội dung!'); b.innerHTML=old; b.disabled=false; return; }
             
-            // ĐÃ BỎ KIỂM TRA TỪ CẤM Ở ĐÂY
+            // XỬ LÝ GỘP DỮ LIỆU TRƯỜNG LỚP
+            let finalSchool = standardizeSchool(rawSchoolName); // Thêm chữ "Trường" tự động
+            let combinedTruongLop = `Lớp ${rawClassName} - ${finalSchool}`;
 
             const d = { 
                 hoten: standardizeName(rawHoten), 
                 tinhthanh: rawTinhthanh, 
-                truonglop: standardizeName(rawTruonglop), 
+                truonglop: combinedTruongLop, // Gửi dữ liệu đã gộp
                 nguoinhan: document.getElementById('inp-to').value, 
                 noidung: standardizeContent(rawNoidung),
                 videoLink: document.getElementById('inp-vid').value 
