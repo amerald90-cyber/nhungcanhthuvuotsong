@@ -443,7 +443,7 @@
         "Tỉnh Cà Mau", "Tỉnh Điện Biên", "Tỉnh Vĩnh Long", "Tỉnh Lâm Đồng"
     ];
 
-    const BAD_WORDS_LIST = ["địt", "đụ", "lồn", "cặc", "buồi", "mẹ mày", "con chó", "thằng chó", "ngu", "óc chó", "điếm", "phò", "đĩ", "vãi", "vcl", "vl", "đm", "dm", "dkm", "vkl", "chết", "giết", "đéo", "fuck", "shit", "mày tao", "chửi", "cút"];
+    const BAD_WORDS_LIST = ["địt", "đụ", "lồn", "cặc", "buồi", "mẹ mày", "con chó", "thằng chó", "ngu", "óc chó", "điếm", "phò", "đĩ", "vãi", "vcl", "vl", "đm", "dm", "dkm", "vkl", "chết", "giết", "đéo", "fuck", "shit", "mày tao", "chửi", "cút", "biến", "chém", "chúng mày", "sex"];
 
     // --- CÁC HÀM XỬ LÝ VĂN BẢN ---
 
@@ -499,10 +499,25 @@
     let posts = [], currId = null;
     
     const successMessages = [
-        "Cảm ơn cháu! Những dòng chữ này sẽ là ngọn lửa ấm áp giữa biển khơi.",
-        "Lá thư đã được chuyển đi. Chú bộ đội sẽ rất vui khi nhận được tình cảm của cháu.",
-        "Biển đảo quê hương thêm gần lại nhờ những cánh thư yêu thương này.",
-        "Tuyệt vời! Một cánh chim hải âu vừa mang tin nhắn của cháu ra đảo xa."
+        "Cháu yêu quý, giữa bao la biển trời, từng dòng chữ của cháu như một làn gió mới mang theo hơi thở ấm áp của đất liền thổi vào tâm hồn chú. Ở nơi đầu sóng ngọn gió này, khi xung quanh chỉ có nắng cháy và vị mặn mòi của biển, sự quan tâm ngây thơ của cháu chính là nguồn nước mát lành nhất, tiếp thêm sức mạnh để chú chắc tay súng bảo vệ bình yên cho Tổ quốc.",
+  
+  "Giữa mênh mông sóng nước, nhận được lời nhắn gửi của cháu, chú bỗng thấy khoảng cách ngàn dặm như tan biến. Tiếng sóng vỗ ầm ĩ ngoài kia dường như cũng dịu lại, nhường chỗ cho những nốt nhạc vui tươi nhảy múa trong lòng chú khi đọc thư cháu. Cháu hãy yên tâm học tập thật tốt nhé, vì ngoài này đã có các chú canh giữ biển trời.",
+  
+  "Cháu thân yêu, lá thư nhỏ bé cháu gửi đã vượt ngàn con sóng dữ để đến tận tay chú, mang theo cả tình cảm thiêng liêng của hậu phương. Cầm lá thư trên tay, chú thấy như đang được nắm lấy bàn tay nhỏ bé của cháu, thấy được hình ảnh mái trường, con đường làng và những nụ cười bình yên mà các chú đang ngày đêm gìn giữ.",
+  
+  "Cháu yêu quý, những lời cháu viết như những cánh hoa biển rực rỡ nhất nở giữa trùng khơi khô cằn. Nó nhắc nhở chú về lý do vì sao mình lại đứng ở đây, kiên cường dưới nắng gió khắc nghiệt: đó là để bảo vệ những ước mơ xanh và tương lai rạng ngời của những mầm non như cháu.",
+  
+  "Giữa tiếng sóng ngày đêm không ngừng vỗ, lá thư ngắn của cháu như một bản tình ca êm dịu làm vơi đi nỗi nhớ nhà. Chú hứa sẽ là ngọn hải đăng vững chãi nhất, không ngại gian khó, không ngại hy sinh, để cháu và mọi người ở đất liền luôn có những giấc ngủ ngon và những ngày vui trọn vẹn.",
+  
+  "Cháu thân yêu, lá thư nhỏ bé nhưng chứa đựng tình cảm lớn lao tựa như đại dương bao la ngoài kia. Mỗi nét chữ của cháu là một lời động viên, nhắc nhở chú rằng dù ở nơi đảo xa hẻo lánh, chú không bao giờ cô đơn vì luôn có những trái tim bé nhỏ ở đất liền hướng về.",
+  
+  "Cháu yêu quý, trong từng nét chữ của cháu, chú thấy được niềm tin yêu trong sáng và lòng tự hào dân tộc đang lớn dần. Hãy nuôi dưỡng ước mơ ấy cháu nhé! Chú sẽ gom những ánh sao trời đẹp nhất trên biển đêm nay để gửi vào trong giấc mơ của cháu.",
+  
+  "Giữa biển khơi xanh thẳm, lời nhắn gửi của cháu đến với chú như cánh chim hải âu mang tin vui về tổ ấm. Cháu biết không, chính sự hồn nhiên và chăm ngoan của cháu là hậu phương vững chắc nhất, giúp các chú vượt qua mọi bão tố phong ba để hoàn thành nhiệm vụ.",
+  
+  "Cháu thân yêu, đọc những dòng chữ trong trẻo của cháu, chú dường như ngửi thấy mùi hương lúa mới, mùi khói bếp thân quen của quê nhà. Cảm ơn cháu đã mang cả một bầu trời ký ức tươi đẹp đến nơi đảo xa, để chú thấy quê hương luôn ở ngay bên cạnh mình, trong lồng ngực trái.",
+  
+  "Cháu yêu quý, những lời chúc và sự quan tâm của cháu là món quà quý giá hơn bất kỳ châu báu nào dưới đáy đại dương. Chú sẽ cất giữ lá thư này trong túi áo ngực, ngay sát trái tim mình, để mỗi nhịp đập của chú đều có thêm sức mạnh từ tình yêu thương của cháu."
     ];
 
     async function callAPI(action, payload = null, method = 'GET') {
