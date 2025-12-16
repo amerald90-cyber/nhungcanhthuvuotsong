@@ -176,6 +176,47 @@
     .about-header { height: 200px; background: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=2600') center/cover; position: relative; display: flex; align-items: center; justify-content: center; }
     .about-header-text { text-shadow: 0 2px 10px rgba(0,0,0,0.6); z-index: 2; padding: 0 20px; text-align: center; font-size: 2rem; }
 
+    /* CSS CHO NÚT XOAY TRÊN CARD */
+    .btn-rotate-card {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.8);
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: 0.2s;
+    }
+    .btn-rotate-card:hover { background: white; color: var(--primary); transform: scale(1.1); }
+
+    /* CSS CHO MUSIC PLAYER MINI */
+    .music-player-mini {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 10px 15px;
+        border-radius: 50px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 9999;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    .music-player-mini:hover { transform: scale(1.05); }
+    .music-icon { color: var(--primary); animation: spinDisk 3s linear infinite; }
+    .music-icon.paused { animation-play-state: paused; }
+    @keyframes spinDisk { 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -195,6 +236,21 @@
       <div class="mt-4 text-white-50 small animate__animated animate__fadeIn animate__delay-3s">
           Khơi dậy tình yêu biển đảo - Bảo vệ chủ quyền thiêng liêng của Tổ quốc
       </div>
+  </div>
+
+  <!-- MUSIC PLAYER MINI -->
+  <div class="music-player-mini animate__animated animate__fadeInLeft" id="musicPlayer">
+      <div class="music-icon paused" id="musicIcon"><i class="fas fa-compact-disc fa-lg"></i></div>
+      <div style="font-size: 0.8rem; font-weight: 600; color: #333; margin-right: 5px;">
+          <div>Giai điệu biển đảo</div>
+      </div>
+      <button class="btn btn-sm btn-primary rounded-circle" onclick="toggleMusic()" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-play" id="playIcon"></i>
+      </button>
+      <audio id="bgMusic" loop>
+          <!-- LINK NHẠC ĐÃ ĐƯỢC THÊM VÀO ĐÂY -->
+          <source src="https://vnso.vn/wp-content/uploads/2023/08/Noi-Dao-Xa-Trong-Tan.mp3" type="audio/mpeg">
+      </audio>
   </div>
 
   <!-- NAVBAR -->
@@ -481,32 +537,45 @@
         return str.replace(/(^|\s)\S/g, l => l.toUpperCase());
     }
 
-    // HÀM CHUẨN HÓA TÊN TRƯỜNG THÔNG MINH
-    function standardizeSchool(str) {
-        if (!str) return "";
-        str = String(str).trim();
-        
-        // 1. Tự động thay thế "TH" thành "Tiểu học" nếu người dùng viết tắt
-        str = str.replace(/\b(?:th|t\.h)\b/gi, "Tiểu học"); 
+    // HÀM CHUẨN HÓA TÊN TRƯỜNG THÔNG MINH (DỰA VÀO LỚP)
+    function standardizeSchool(schoolInput, classInput) {
+        if (!schoolInput) return "";
+        let str = String(schoolInput).trim();
 
-        // 2. Viết hoa chữ cái đầu mỗi từ
+        // 1. Viết hoa chữ cái đầu mỗi từ
         str = str.toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
+
+        // 2. Kiểm tra xem người dùng đã ghi rõ cấp học chưa (Tiểu học, THCS, THPT)
+        const lower = str.toLowerCase();
+        if (lower.includes("tiểu học") || lower.includes("mầm non") || lower.includes("thcs") || lower.includes("thpt") || lower.includes("trung học")) {
+            // Nếu đã có, chỉ đảm bảo có chữ "Trường" ở đầu
+            if (!lower.startsWith("trường")) {
+                str = "Trường " + str;
+            }
+            return str;
+        }
+
+        // 3. Nếu chưa có cấp học (vd: "Ninh Khang", "TH Ninh Khang") -> Dựa vào số LỚP để đoán
+        // Xóa chữ "TH", "T.H" hoặc "Trường" ở đầu đi để ghép lại cho chuẩn
+        str = str.replace(/^Trường\s+/i, "").replace(/^(Th|T\.h)\s+/i, "").trim();
+
+        // Lấy số từ ô Lớp
+        let grade = 0;
+        if (classInput) {
+            const match = classInput.match(/\d+/); // Tìm con số đầu tiên trong chuỗi lớp
+            if (match) grade = parseInt(match[0]);
+        }
+
+        let prefix = "Tiểu học"; // Mặc định là Tiểu học nếu không tìm thấy số hoặc số nhỏ
         
-        // 3. Kiểm tra xem đã có chữ "Trường" ở đầu chưa, nếu chưa thì thêm vào
-        if (!str.toLowerCase().startsWith("trường")) {
-            str = "Trường " + str;
+        if (grade >= 6 && grade <= 9) {
+            prefix = "THCS";
+        } else if (grade >= 10 && grade <= 12) {
+            prefix = "THPT";
         }
+        // Nếu grade 1-5 hoặc grade = 0 (không nhập số) -> Vẫn giữ là "Tiểu học"
 
-        // 4. Nếu chỉ nhập tên địa danh (Vd: "Ninh Khang") mà thiếu cấp học, tự động thêm "Tiểu học" (Theo yêu cầu)
-        // Logic: Nếu không chứa "Tiểu Học", "THCS", "THPT", "Mầm Non" -> Thêm "Tiểu Học"
-        if (!str.toLowerCase().includes("tiểu học") && 
-            !str.toLowerCase().includes("thcs") && 
-            !str.toLowerCase().includes("thpt") && 
-            !str.toLowerCase().includes("mầm non")) {
-             str = str.replace("Trường", "Trường Tiểu học");
-        }
-
-        return str;
+        return `Trường ${prefix} ${str}`;
     }
 
     function standardizeContent(str) {
@@ -549,7 +618,37 @@
     function enterSite() {
         const intro = document.getElementById('intro-overlay');
         intro.classList.add('fade-out');
-        setTimeout(() => { if(intro) intro.style.display = 'none'; }, 800);
+        setTimeout(() => { 
+            if(intro) intro.style.display = 'none'; 
+            // Tự động phát nhạc khi vào (có thể bị trình duyệt chặn)
+            toggleMusic(true);
+        }, 800);
+    }
+
+    // HÀM XỬ LÝ NHẠC
+    function toggleMusic(autoPlay = false) {
+        const audio = document.getElementById('bgMusic');
+        const icon = document.getElementById('musicIcon');
+        const playBtn = document.getElementById('playIcon');
+        
+        if (autoPlay) {
+            audio.play().then(() => {
+                icon.classList.remove('paused');
+                playBtn.className = "fas fa-pause";
+            }).catch(e => {
+                console.log("Autoplay blocked by browser");
+            });
+        } else {
+            if (audio.paused) {
+                audio.play();
+                icon.classList.remove('paused');
+                playBtn.className = "fas fa-pause";
+            } else {
+                audio.pause();
+                icon.classList.add('paused');
+                playBtn.className = "fas fa-play";
+            }
+        }
     }
 
     let posts = [], currId = null;
@@ -558,7 +657,7 @@
     let cardRotations = {};
 
     const successMessages = [
-        "Cháu yêu quý, giữa bao la biển trời, từng dòng chữ của cháu như một làn gió mới mang theo hơi thở ấm áp của đất liền thổi vào tâm hồn chú. Ở nơi đầu sóng ngọn gió này, khi xung quanh chỉ có nắng cháy và vị mặn mòi của biển, sự quan tâm ngây thơ của cháu chính là nguồn nước mát lành nhất, tiếp thêm sức mạnh để chú chắc tay súng bảo vệ bình yên cho Tổ quốc.",
+       "Cháu yêu quý, giữa bao la biển trời, từng dòng chữ của cháu như một làn gió mới mang theo hơi thở ấm áp của đất liền thổi vào tâm hồn chú. Ở nơi đầu sóng ngọn gió này, khi xung quanh chỉ có nắng cháy và vị mặn mòi của biển, sự quan tâm ngây thơ của cháu chính là nguồn nước mát lành nhất, tiếp thêm sức mạnh để chú chắc tay súng bảo vệ bình yên cho Tổ quốc.",
   
   "Giữa mênh mông sóng nước, nhận được lời nhắn gửi của cháu, chú bỗng thấy khoảng cách ngàn dặm như tan biến. Tiếng sóng vỗ ầm ĩ ngoài kia dường như cũng dịu lại, nhường chỗ cho những nốt nhạc vui tươi nhảy múa trong lòng chú khi đọc thư cháu. Cháu hãy yên tâm học tập thật tốt nhé, vì ngoài này đã có các chú canh giữ biển trời.",
   
@@ -936,8 +1035,8 @@
 
             if(!rawHoten || !rawNoidung || !rawTinhthanh || !rawSchoolName) { showNotify('Vui lòng điền tên, chọn tỉnh thành, tên trường và viết nội dung!'); b.innerHTML=old; b.disabled=false; return; }
             
-            // XỬ LÝ GỘP DỮ LIỆU TRƯỜNG LỚP
-            let finalSchool = standardizeSchool(rawSchoolName); // Thêm chữ "Trường" tự động
+            // XỬ LÝ GỘP DỮ LIỆU TRƯỜNG LỚP THÔNG MINH
+            let finalSchool = standardizeSchool(rawSchoolName, rawClassName); // Truyền thêm lớp vào để đoán cấp học
             let combinedTruongLop = `Lớp ${rawClassName} - ${finalSchool}`;
 
             const d = { 
