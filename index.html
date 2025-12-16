@@ -98,7 +98,22 @@
     .user-name { font-weight: 700; color: #1e293b; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .user-meta { font-size: 0.75rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
     .dot-sep { margin: 0 6px; font-size: 0.4rem; color: #cbd5e1; display: inline-block; vertical-align: middle; }
-    .handwritten-text { font-family: 'Great Vibes', cursive; font-size: 1.5rem; color: #334155; margin-top: 5px; margin-bottom: 10px; line-height: 1.4; }
+    
+    .handwritten-text { 
+        font-family: 'Great Vibes', cursive; 
+        font-size: 1.5rem; 
+        color: #334155; 
+        margin-top: 5px; 
+        margin-bottom: 10px; 
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 4; 
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+    }
+    
     .badge-custom { background-color: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-bottom: 8px; border: 1px solid #bae6fd; }
     
     .search-bar-container { background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 30px; border: 1px solid #e2e8f0; }
@@ -108,7 +123,7 @@
     
     .screen { display: none; opacity: 0; transition: opacity 0.3s; flex: 1; }
     .screen.active { display: block; opacity: 1; }
-    .media-box { background: #0f172a; border-radius: 12px; overflow: hidden; margin-top: 12px; display: flex; justify-content: center; align-items: center; width: 100%; }
+    .media-box { background: #0f172a; border-radius: 12px; overflow: hidden; margin-top: 12px; display: flex; justify-content: center; align-items: center; width: 100%; height: 200px; position: relative; }
     
     footer { background-color: #0f172a; color: white; padding: 60px 0 30px; margin-top: auto; border-top: 4px solid var(--primary); }
     .footer-title { font-weight: 800; font-size: 1.2rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
@@ -154,6 +169,26 @@
     @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
     .about-header { height: 200px; background: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=2600') center/cover; position: relative; display: flex; align-items: center; justify-content: center; }
     .about-header-text { text-shadow: 0 2px 10px rgba(0,0,0,0.6); z-index: 2; padding: 0 20px; text-align: center; font-size: 2rem; }
+
+    /* CSS CHO NÚT XOAY TRÊN CARD */
+    .btn-rotate-card {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.8);
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: 0.2s;
+    }
+    .btn-rotate-card:hover { background: white; color: var(--primary); transform: scale(1.1); }
   </style>
 </head>
 <body>
@@ -446,37 +481,40 @@
     const BAD_WORDS_LIST = ["địt", "đụ", "lồn", "cặc", "buồi", "mẹ mày", "con chó", "thằng chó", "ngu", "óc chó", "điếm", "phò", "đĩ", "vãi", "vcl", "vl", "đm", "dm", "dkm", "vkl", "chết", "giết", "đéo", "fuck", "shit", "mày tao", "chửi", "cút", "biến", "chém", "chúng mày", "sex"];
 
     // --- CÁC HÀM XỬ LÝ VĂN BẢN ---
-
-    // 1. Chuẩn hóa Tên
     function standardizeName(str) {
         if (!str) return "";
-        // Ép kiểu thành string để tránh lỗi nếu nhập số
         str = String(str).trim().toLowerCase().replace(/\s+/g, ' ');
         return str.replace(/(^|\s)\S/g, l => l.toUpperCase());
     }
 
-    // 2. Chuẩn hóa Nội dung
     function standardizeContent(str) {
         if (!str) return "";
-        str = String(str); // Ép kiểu string
+        str = String(str);
+        
+        // CẢI TIẾN: Kiểm tra nếu viết hoa quá nhiều (> 5 ký tự và viết hoa hết) thì chuyển về chữ thường
+        // Ví dụ: "CON CHÚC CÁC CHÚ" -> "con chúc các chú" -> sau đó hàm dưới sẽ viết hoa đầu câu
+        if (str.length > 5 && str === str.toUpperCase()) {
+            str = str.toLowerCase();
+        }
+
         let upperCount = str.replace(/[^A-ZĂÂÁÀẢÃẠ...]/g, "").length; 
+        // Vẫn giữ logic cũ
         if (str.length > 10 && (str === str.toUpperCase())) {
             str = str.toLowerCase();
         }
+        
         str = str.charAt(0).toUpperCase() + str.slice(1);
         return str.replace(/([.!?]\s+)([a-z])/g, (match, separator, char) => {
             return separator + char.toUpperCase();
         });
     }
 
-    // 3. Kiểm tra từ ngữ thô tục
     function containsBadWords(str) {
         if (!str) return false;
         const textCheck = String(str).toLowerCase();
         return BAD_WORDS_LIST.some(word => textCheck.includes(word));
     }
     
-    // 4. Khởi tạo danh sách tỉnh thành
     function initProvinces() {
         const select = document.getElementById('inp-loc');
         select.innerHTML = '<option value="" disabled selected>Chọn Tỉnh/Thành...</option>';
@@ -489,17 +527,19 @@
     }
 
     // --- CÁC HÀM HỆ THỐNG ---
-
     function enterSite() {
         const intro = document.getElementById('intro-overlay');
         intro.classList.add('fade-out');
-        setTimeout(() => {
-            if(intro) intro.style.display = 'none';
-        }, 800);
+        setTimeout(() => { if(intro) intro.style.display = 'none'; }, 800);
     }
 
     let posts = [], currId = null;
+    let currentRotation = 0; // Biến lưu góc xoay ảnh chi tiết
+    let sessionLikes = {}; // Lưu số lượt like tạm thời
     
+    // Lưu trạng thái xoay cho từng bài viết ở màn hình ngoài
+    let cardRotations = {};
+
     const successMessages = [
         "Cháu yêu quý, giữa bao la biển trời, từng dòng chữ của cháu như một làn gió mới mang theo hơi thở ấm áp của đất liền thổi vào tâm hồn chú. Ở nơi đầu sóng ngọn gió này, khi xung quanh chỉ có nắng cháy và vị mặn mòi của biển, sự quan tâm ngây thơ của cháu chính là nguồn nước mát lành nhất, tiếp thêm sức mạnh để chú chắc tay súng bảo vệ bình yên cho Tổ quốc.",
   
@@ -539,9 +579,8 @@
     }
 
     function removeVietnameseTones(str) {
-        if (!str) return ""; // Kiểm tra rỗng
-        str = String(str);   // FIX LỖI: Ép kiểu thành string trước khi xử lý
-        
+        if (!str) return "";
+        str = String(str);
         str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); 
         str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e"); 
         str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i"); 
@@ -554,10 +593,7 @@
         return str.toLowerCase();
     }
 
-    window.onload = () => { 
-        initData(); 
-        initProvinces(); 
-    };
+    window.onload = () => { initData(); initProvinces(); };
     
     async function initData() {
         try {
@@ -592,10 +628,8 @@
     function renderRankings(data) {
         let provCounts = {}, schoolCounts = {};
         data.forEach(p => {
-            // FIX LỖI Ở ĐÂY: Thêm String(...) để chuyển số thành chữ trước khi trim()
             let pr = p.tinhthanh ? String(p.tinhthanh).trim() : "Khác";
             let sc = p.truonglop ? String(p.truonglop).trim() : "Khác";
-            
             if(pr && pr.toLowerCase() !== 'khác') provCounts[pr] = (provCounts[pr] || 0) + 1;
             if(sc && sc.toLowerCase() !== 'khác') schoolCounts[sc] = (schoolCounts[sc] || 0) + 1;
         });
@@ -633,7 +667,6 @@
         
         let filtered = [...posts]; 
         let title = "Tất cả thư";
-
         if(type === 'popular') { title = "Thư Nổi Bật (Nhiều tim nhất)"; }
         else if(type === 'haiquan') { document.getElementById('search-to').value = "Hải Quân"; filtered = filtered.filter(p=>p.nguoinhan.includes("Hải Quân")); title = "Thư Gửi chiến Sĩ Hải Quân"; }
         else if(type === 'canhsat') { document.getElementById('search-to').value = "Cảnh sát"; filtered = filtered.filter(p=>p.nguoinhan.includes("Cảnh sát")); title = "Thư Gửi chiến Sĩ Cảnh Sát Biển"; }
@@ -649,9 +682,7 @@
         const nameVal = removeVietnameseTones(document.getElementById('search-name').value);
         const provVal = removeVietnameseTones(document.getElementById('search-prov').value);
         const toVal = document.getElementById('search-to').value; 
-        
         let result = posts.filter(p => {
-            // FIX: Chuyển dữ liệu thành String trước khi xử lý
             const matchesName = removeVietnameseTones(String(p.hoten)).includes(nameVal);
             const matchesProv = removeVietnameseTones(String(p.tinhthanh)).includes(provVal);
             let matchesTo = true;
@@ -661,9 +692,7 @@
             }
             return matchesName && matchesProv && matchesTo;
         });
-
         result.sort((a, b) => parseInt(b.sotim) - parseInt(a.sotim));
-
         if (result.length > 0) { document.getElementById('no-result').classList.add('d-none'); render(result, 'full-feed'); } 
         else { document.getElementById('full-feed').innerHTML = ''; document.getElementById('no-result').classList.remove('d-none'); }
     }
@@ -680,86 +709,100 @@
         if(posts.length) show('feed-screen'); else goHome();
     }
 
-    // --- HÀM XỬ LÝ MEDIA ĐÃ ĐƯỢC CHỈNH SỬA (SANDBOX) ---
+    // --- HÀM MEDIA ---
     function getMedia(p, isDetail = false) {
         let html = '';
-        
-        // Hàm lấy ID từ link Google Drive
-        const getDriveId = (link) => { 
-            if(!link) return null; 
-            const m = link.match(/[-\w]{25,}/); 
-            return m ? m[0] : null; 
-        };
-
-        // Hàm lấy ID Youtube
-        const getYtId = (link) => {
-            if(!link) return null;
-            const regExp = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))((\w|-){11})(?:\S+)?$/;
-            const match = link.match(regExp);
-            return (match && match[1]) ? match[1] : null;
-        }
-        
-        // Cấu hình SANDBOX: Cho phép chạy script, hiển thị, nhưng KHÔNG cho phép mở popup hay tab mới
+        const getDriveId = (link) => { if(!link) return null; const m = link.match(/[-\w]{25,}/); return m ? m[0] : null; };
+        const getYtId = (link) => { if(!link) return null; const match = link.match(/^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))((\w|-){11})(?:\S+)?$/); return (match && match[1]) ? match[1] : null; }
         const sandboxAttr = 'sandbox="allow-scripts allow-same-origin allow-presentation"';
 
-        // 1. ƯU TIÊN KIỂM TRA LINK VIDEO (Youtube/Drive dán vào ô Link Video)
         if(p.videoLink) {
             const ytId = getYtId(p.videoLink);
             const driveId = getDriveId(p.videoLink);
-
             if(ytId) {
-                // Youtube: Thêm sandbox và các tham số ẩn logo/điều hướng
-                html = `<div class="video-container" onclick="event.stopPropagation()">
-                            <iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0" 
-                            ${sandboxAttr} allowfullscreen></iframe>
-                        </div>`;
+                html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0" ${sandboxAttr} allowfullscreen></iframe></div>`;
             } else if (driveId) {
-                // Drive Link: Thêm sandbox để chặn nút Pop-out góc phải
-                html = `<div class="video-container" onclick="event.stopPropagation()">
-                            <iframe src="https://drive.google.com/file/d/${driveId}/preview" 
-                            ${sandboxAttr} allowfullscreen></iframe>
-                        </div>`;
+                html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://drive.google.com/file/d/${driveId}/preview" ${sandboxAttr} allowfullscreen></iframe></div>`;
             }
         } 
-        // 2. NẾU KHÔNG CÓ LINK VIDEO -> KIỂM TRA FILE UPLOAD
         else if(p.linkfile) {
              const id = getDriveId(p.linkfile);
              if(id) {
                 const isImage = p.loaifile && String(p.loaifile).toLowerCase().includes('image');
                 const isVideo = p.loaifile && String(p.loaifile).toLowerCase().includes('video');
+                // Tính xem đây có phải PDF không? (Nếu không phải ảnh/video thì mặc định PDF)
+                const isPDF = !isImage && !isVideo; 
                 
                 if (isVideo) {
-                    // Video tải lên (Drive): Thêm sandbox
-                    html = `<div class="video-container" onclick="event.stopPropagation()">
-                                <iframe src="https://drive.google.com/file/d/${id}/preview" 
-                                ${sandboxAttr} allowfullscreen></iframe>
-                            </div>`;
+                    html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://drive.google.com/file/d/${id}/preview" ${sandboxAttr} allowfullscreen></iframe></div>`;
                 } else if (isImage) {
                     if(isDetail) {
-                        html = `<div class="detail-image-box mb-3"><img src="https://drive.google.com/thumbnail?id=${id}&sz=w1600"></div>`;
+                        html = `<div class="detail-image-box mb-3 overflow-hidden text-center" style="background:#f8fafc; border-radius:12px; padding:10px;">
+                                    <img id="main-detail-img" src="https://drive.google.com/thumbnail?id=${id}&sz=w1600" style="transition: transform 0.3s ease; max-width:100%; display:inline-block;">
+                                </div>
+                                <div class="text-center mb-4">
+                                    <button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="rotateImg()"><i class="fas fa-sync-alt me-1"></i> Xoay ảnh</button>
+                                </div>`;
                     } else {
-                        html = `<div class="media-box"><img src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; object-fit:cover; max-height:200px"></div>`;
+                        // MEDIA BOX TRÊN CARD: Thêm nút xoay
+                        html = `<div class="media-box">
+                                    <button class="btn-rotate-card shadow-sm" onclick="event.stopPropagation(); rotatePostImg('${p.id}')" title="Xoay ảnh"><i class="fas fa-sync-alt"></i></button>
+                                    <img id="img-${p.id}" src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s ease;">
+                                </div>`;
                     }
-                } else if (isDetail) {
-                    // PDF: Vẫn giữ nguyên hoặc thêm sandbox nếu muốn chặn in ấn/tải về tab mới
-                    html = `<div class="pdf-container mb-3"><iframe src="https://drive.google.com/file/d/${id}/preview" ${sandboxAttr}></iframe></div>`;
+                } else if (isPDF) {
+                    // XỬ LÝ PDF:
+                    if (isDetail) {
+                         // Bên trong chi tiết: Hiện PDF đầy đủ (iframe)
+                        html = `<div class="pdf-container mb-3"><iframe src="https://drive.google.com/file/d/${id}/preview" ${sandboxAttr}></iframe></div>`;
+                    } else {
+                        // Bên ngoài (Card): Hiện THUMBNAIL (ảnh) để đẹp như ảnh
+                        html = `<div class="media-box">
+                                    <img src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; height:100%; object-fit:cover;">
+                                </div>`;
+                    }
                 }
              }
         }
-        
-        if(isDetail && html.includes('video-container')) {
-            html = html.replace('video-container', 'video-container mb-4');
-        }
+        if(isDetail && html.includes('video-container')) { html = html.replace('video-container', 'video-container mb-4'); }
         return html;
+    }
+
+    // --- HÀM XOAY ẢNH CHI TIẾT ---
+    function rotateImg() {
+        const img = document.getElementById('main-detail-img');
+        if(img) {
+            currentRotation += 90;
+            if(currentRotation >= 360) currentRotation = 0;
+            let scale = 1;
+            if (currentRotation % 180 !== 0) { scale = 0.8; }
+            img.style.transform = `rotate(${currentRotation}deg) scale(${scale})`;
+        }
+    }
+
+    // --- HÀM MỚI: XOAY ẢNH NGAY TRÊN CARD ---
+    function rotatePostImg(postId) {
+        const img = document.getElementById(`img-${postId}`);
+        if(img) {
+            if (!cardRotations[postId]) cardRotations[postId] = 0;
+            cardRotations[postId] += 90;
+            if (cardRotations[postId] >= 360) cardRotations[postId] = 0;
+            
+            let scale = 1;
+            // Thu nhỏ xíu nếu xoay ngang để không bị xấu trong khung
+            if (cardRotations[postId] % 180 !== 0) { scale = 0.75; }
+            
+            img.style.transform = `rotate(${cardRotations[postId]}deg) scale(${scale})`;
+        }
     }
 
     function render(lst, divId) {
         const div = document.getElementById(divId); div.innerHTML = '';
-        if(!lst.length) { 
-            if(divId === 'home-feed') div.innerHTML='<div class="text-center w-100 text-muted py-5">Chưa có bài viết nào.</div>'; 
-            return; 
-        }
+        if(!lst.length) { if(divId === 'home-feed') div.innerHTML='<div class="text-center w-100 text-muted py-5">Chưa có bài viết nào.</div>'; return; }
         lst.forEach(p => {
+            // Chuẩn hóa nội dung hiển thị trên thẻ (viết hoa -> thường)
+            let displayContent = standardizeContent(p.noidung);
+            
             div.innerHTML += `
             <div class="col-md-6 col-lg-3 animate__animated animate__fadeIn">
                 <div class="post-card" style="cursor: pointer;" onclick="detail('${p.id}')">
@@ -767,9 +810,9 @@
                         <div class="avatar">${p.hoten ? String(p.hoten)[0] : '?'}</div>
                         <div class="user-info"><div class="user-name">${p.hoten}</div><div class="user-meta"><span>${p.truonglop}</span><i class="fas fa-circle dot-sep"></i><span><i class="fas fa-map-marker-alt me-1"></i>${p.tinhthanh}</span></div></div>
                     </div>
-                    <div class="p-3 flex-grow-1">
+                    <div class="p-3 flex-grow-1 d-flex flex-column">
                         <span class="badge-custom"><i class="far fa-paper-plane me-1"></i>${p.nguoinhan}</span>
-                        <div class="handwritten-text" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.noidung}</div>
+                        <div class="handwritten-text flex-grow-1">${displayContent}</div>
                         ${getMedia(p)}
                     </div>
                     <div class="p-3 bg-light d-flex justify-content-between align-items-center mt-auto">
@@ -782,13 +825,21 @@
     }
 
     function detail(id) {
+        currentRotation = 0; 
         currId = id; const p = posts.find(x=>x.id==id); if(!p) return;
         document.getElementById('mainNav').classList.add('hidden');
+        
+        // Chuẩn hóa nội dung hiển thị trong chi tiết
+        let displayContent = standardizeContent(p.noidung);
+
         document.getElementById('detail-cont').innerHTML = `
-            <div class="detail-title">${p.hoten}: Gửi ${p.nguoinhan}</div>
-            <div class="detail-meta"><span><i class="far fa-clock me-1"></i> ${p.thoigian}</span> <span class="mx-2">|</span> <span><i class="fas fa-map-marker-alt me-1"></i> ${p.tinhthanh}</span></div>
+            <div class="detail-title">
+                ${p.hoten}
+                <div class="fs-6 text-muted fw-normal mt-1"><i class="fas fa-school me-2"></i>${p.truonglop}</div>
+            </div>
+            <div class="detail-meta"><span>Gửi: ${p.nguoinhan}</span> <span class="mx-2">|</span> <span><i class="fas fa-map-marker-alt me-1"></i> ${p.tinhthanh}</span></div>
             ${getMedia(p, true)}
-            <div class="detail-content">${p.noidung}</div>
+            <div class="detail-content">${displayContent}</div>
             <div class="text-center mt-5"><button class="btn btn-outline-danger btn-lg rounded-pill px-5 fw-bold btn-like-wrapper-${p.id}" onclick="like('${p.id}')"><i class="fas fa-heart me-2"></i> Thả tim (<span class="like-cnt-${p.id}">${p.sotim}</span>)</button></div>
         `;
         show('detail-screen'); loadCmt(id);
@@ -797,12 +848,19 @@
     async function like(id) {
         const p = posts.find(x => x.id == id);
         if(p) {
+            // Kiểm tra giới hạn 20 like
+            if(!sessionLikes[id]) sessionLikes[id] = 0;
+            if(sessionLikes[id] >= 20) {
+                showNotify("Bạn chỉ được thả tim tối đa 20 lần cho bài viết này!", "warning");
+                return;
+            }
+            
+            sessionLikes[id]++;
             p.sotim = Number(p.sotim) + 1;
             document.querySelectorAll(`.like-cnt-${id}`).forEach(el => el.innerText = p.sotim);
             document.querySelectorAll(`.btn-like-wrapper-${id}`).forEach(btn => btn.classList.add('heart-pulse'));
             const globalHeartEl = document.getElementById('stat-hearts');
             globalHeartEl.innerText = (parseInt(globalHeartEl.innerText.replace(/\./g, '')) || 0) + 1;
-            
             await callAPI('like', { id: id }, 'POST');
         }
     }
@@ -819,42 +877,28 @@
         let n = document.getElementById('c-name').value;
         const c = document.getElementById('c-text').value;
         if(!n || !c) return showNotify('Vui lòng nhập đủ tên và nội dung!');
-        
-        // KIỂM TRA TỪ CẤM TRONG COMMENT
-        if (containsBadWords(n) || containsBadWords(c)) {
-            return showNotify("Nội dung bình luận chứa từ ngữ không phù hợp.", "error");
-        }
-        
+        // GIỮ NGUYÊN KIỂM TRA TỪ CẤM Ở BÌNH LUẬN
+        if (containsBadWords(n) || containsBadWords(c)) { return showNotify("Nội dung bình luận chứa từ ngữ không phù hợp.", "error"); }
         n = standardizeName(n);
-
         const box = document.getElementById('cmt-list');
         const fakeCmt = `<div class="d-flex mb-3 animate__animated animate__fadeIn"><div class="avatar me-3 shadow-sm" style="width:40px;height:40px;font-size:1rem">${n[0]}</div><div class="bg-white border p-3 rounded-4 w-100 shadow-sm"><div class="fw-bold text-primary mb-1">${n}</div><div class="text-dark">${c}</div></div></div>`;
         if(box.innerHTML.includes('người đầu tiên')) box.innerHTML = '';
         box.innerHTML = fakeCmt + box.innerHTML;
         document.getElementById('c-text').value='';
-        
         await callAPI('comment', { postId: currId, name: n, content: c }, 'POST');
     }
 
     async function sendData() {
         const b = document.getElementById('btn-send'), old = b.innerHTML; b.innerHTML='Đang gửi...'; b.disabled=true;
-        
         try {
             let rawHoten = document.getElementById('inp-name').value;
             let rawTinhthanh = document.getElementById('inp-loc').value; 
             let rawTruonglop = document.getElementById('inp-school').value;
             let rawNoidung = document.getElementById('inp-msg').value;
 
-            if(!rawHoten || !rawNoidung || !rawTinhthanh) { 
-                showNotify('Vui lòng điền tên, chọn tỉnh thành và viết nội dung!'); 
-                b.innerHTML=old; b.disabled=false; 
-                return; 
-            }
-
-            if (containsBadWords(rawHoten) || containsBadWords(rawNoidung) || containsBadWords(rawTruonglop)) {
-                b.innerHTML = old; b.disabled = false;
-                return showNotify("Phát hiện từ ngữ không phù hợp trong thư. Hãy sử dụng ngôn từ văn minh!", "error");
-            }
+            if(!rawHoten || !rawNoidung || !rawTinhthanh) { showNotify('Vui lòng điền tên, chọn tỉnh thành và viết nội dung!'); b.innerHTML=old; b.disabled=false; return; }
+            
+            // ĐÃ BỎ KIỂM TRA TỪ CẤM Ở ĐÂY
 
             const d = { 
                 hoten: standardizeName(rawHoten), 
@@ -866,7 +910,6 @@
             };
             
             const fileInp = document.getElementById('inp-file').files[0];
-            
             const processUpload = async (fileData = null) => {
                 const payload = { ...d, fileName: fileData ? fileData.name : null, fileType: fileData ? fileData.type : null, fileData: fileData ? fileData.data : null };
                 const r = await callAPI('upload', payload, 'POST');
@@ -878,14 +921,8 @@
                 const r = new FileReader(); 
                 r.onload = e => processUpload({ name: fileInp.name, type: fileInp.type, data: e.target.result.split(',')[1] }); 
                 r.readAsDataURL(fileInp); 
-            } else {
-                processUpload(null);
-            }
-        } catch (error) {
-            console.error(error);
-            showNotify('Có lỗi xảy ra, vui lòng thử lại!', 'error');
-            b.innerHTML=old; b.disabled=false;
-        }
+            } else { processUpload(null); }
+        } catch (error) { console.error(error); showNotify('Có lỗi xảy ra, vui lòng thử lại!', 'error'); b.innerHTML=old; b.disabled=false; }
     }
   </script>
 </body>
