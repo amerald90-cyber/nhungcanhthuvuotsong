@@ -900,8 +900,8 @@
         const p = posts.find(x => x.id == id);
         if(p) {
             if(!sessionLikes[id]) sessionLikes[id] = 0;
-            if(sessionLikes[id] >= 20) {
-                showNotify("Bạn chỉ được thả tim tối đa 20 lần cho bài viết này!", "warning");
+            if(sessionLikes[id] >= 2000) {
+                showNotify("Bạn chỉ được thả tim tối đa 2000 lần cho bài viết này trong 1 lân đăng nhập!", "warning");
                 return;
             }
             sessionLikes[id]++;
