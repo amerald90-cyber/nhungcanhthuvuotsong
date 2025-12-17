@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Những Cánh Thư Vượt Sóng</title>
   
+  <!-- OPTIMIZATION: PRECONNECT -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://drive.google.com">
+  
   <!-- CSS LIBRARIES -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -210,6 +215,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" data-bs-toggle="dropdown"><i class="far fa-compass me-1"></i> Khám Phá</a>
             <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn">
+              <li><a class="dropdown-item" onclick="showFeed('newest')">Cánh chim đầu đàn (Mới nhất)</a></li>
               <li><a class="dropdown-item" onclick="showFeed('all')">Tất cả thư</a></li>
               <li><a class="dropdown-item" onclick="showFeed('popular')">Ngọn hải đăng (Nhiều tim)</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -256,13 +262,25 @@
         </div>
     </div>
     <div class="container py-5">
+      
+      <!-- PHẦN THƯ NỔI BẬT (NGỌN HẢI ĐĂNG) -->
       <div class="d-flex justify-content-between align-items-end mb-4 px-2">
          <h3 class="fw-bold text-dark mb-0" style="font-family: 'Playfair Display', serif;"><i class="fas fa-fire text-danger me-2"></i>Ngọn hải đăng (Nổi bật)</h3>
-         <a href="javascript:void(0)" onclick="showFeed('all')" class="fw-bold text-primary text-decoration-none">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+         <a href="javascript:void(0)" onclick="showFeed('popular')" class="fw-bold text-primary text-decoration-none">Xem tất cả <i class="fas fa-arrow-right"></i></a>
       </div>
       <div class="row g-4 mb-5" id="home-feed">
         <div class="text-center py-5 w-100"><div class="spinner-border text-primary"></div><div class="mt-3 text-muted fw-bold">Đang tải những cánh thư...</div></div>
       </div>
+
+      <!-- PHẦN THƯ MỚI (CÁNH CHIM ĐẦU ĐÀN) -->
+      <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+         <h3 class="fw-bold text-dark mb-0" style="font-family: 'Playfair Display', serif;"><i class="fas fa-paper-plane text-primary me-2"></i>Cánh chim đầu đàn (Mới nhất)</h3>
+         <a href="javascript:void(0)" onclick="showFeed('newest')" class="fw-bold text-primary text-decoration-none">Xem thêm <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="row g-4 mb-5" id="home-newest">
+        <div class="text-center py-5 w-100"><div class="spinner-border text-primary"></div><div class="mt-3 text-muted fw-bold">Đang tải thư mới...</div></div>
+      </div>
+
     </div>
     <div class="ranking-section">
         <div class="container">
@@ -428,7 +446,7 @@
         </div>
         <div class="d-flex justify-content-center gap-3">
             <button class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-bold" onclick="showForm()">Gửi lá thư khác</button>
-            <button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow" onclick="showFeed('all')">Xem thư viện</button>
+            <button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow" onclick="showFeed('newest')">Xem thư của tôi</button>
         </div>
     </div>
   </div>
@@ -649,8 +667,16 @@
       document.getElementById('stat-provinces').innerText = stats.provinces;
       document.getElementById('stat-views').innerText = new Intl.NumberFormat('vi-VN').format(stats.views);
       renderRankings(posts);
+      
+      // RENDER THƯ NỔI BẬT TRƯỚC (Theo yêu cầu mới)
       let popularPosts = [...posts].sort((a,b) => b.sotim - a.sotim).slice(0, 8); 
       render(popularPosts, 'home-feed'); 
+
+      // RENDER THƯ MỚI NHẤT SAU (Lấy từ cuối danh sách đảo ngược lên, không sắp xếp tim)
+      let newestPosts = [...posts].reverse().slice(0, 4);
+      render(newestPosts, 'home-newest');
+
+      // RENDER TẤT CẢ (Để sẵn cho trang feed)
       let sortedAll = [...posts].sort((a,b) => b.sotim - a.sotim);
       render(sortedAll, 'full-feed');
     }
@@ -710,30 +736,44 @@
         
         let filtered = [...posts]; 
         let title = "Tất cả thư";
-        if(type === 'popular') { title = "Thư Nổi Bật (Nhiều tim nhất)"; }
+        
+        // THÊM LOGIC MỚI CHO 'newest' - CHỈ ĐẢO NGƯỢC, KHÔNG SẮP XẾP TIM
+        if(type === 'newest') {
+             title = "Cánh Chim Đầu Đàn (Mới Nhất)";
+             filtered.reverse(); // Đảo ngược để lấy cái mới nhất lên đầu
+        }
+        else if(type === 'popular') { title = "Thư Nổi Bật (Nhiều tim nhất)"; }
         else if(type === 'haiquan') { document.getElementById('search-to').value = "Hải Quân"; filtered = filtered.filter(p=>p.nguoinhan.includes("Hải Quân")); title = "Thư Gửi chiến Sĩ Hải Quân"; }
         else if(type === 'canhsat') { document.getElementById('search-to').value = "Cảnh sát"; filtered = filtered.filter(p=>p.nguoinhan.includes("Cảnh sát")); title = "Thư Gửi chiến Sĩ Cảnh Sát Biển"; }
         else if(type === 'truongsa') { document.getElementById('search-to').value = "Trường Sa"; filtered = filtered.filter(p=>p.nguoinhan.includes("Trường Sa") || p.nguoinhan.includes("DK1")); title = "Thư Gửi Trường Sa & Nhà Giàn DK1"; }
         else if(type === 'video') { filtered = filtered.filter(p=>p.videoLink); title = "Video Clip"; }
 
-        filtered.sort((a, b) => parseInt(b.sotim) - parseInt(a.sotim));
+        // Nếu không phải là xem 'newest', thì mới sắp xếp theo số tim
+        if(type !== 'newest') {
+             filtered.sort((a, b) => parseInt(b.sotim) - parseInt(a.sotim));
+        }
+        
         document.getElementById('feed-title').innerText = title; 
         render(filtered, 'full-feed'); 
     }
 
     function filterLibrary() {
-        const nameVal = removeVietnameseTones(document.getElementById('search-name').value);
-        const provVal = removeVietnameseTones(document.getElementById('search-prov').value);
+        const nameVal = removeVietnameseTones(document.getElementById('search-name').value).trim();
+        const provVal = removeVietnameseTones(document.getElementById('search-prov').value).trim();
         const toVal = document.getElementById('search-to').value; 
         
         let result = posts.filter(p => {
+            // TỐI ƯU TÌM KIẾM: CHUYỂN HẾT VỀ KHÔNG DẤU + THƯỜNG ĐỂ SO SÁNH
             const combinedText = removeVietnameseTones(String(p.hoten) + " " + String(p.truonglop));
             const matchesName = combinedText.includes(nameVal);
             const matchesProv = removeVietnameseTones(String(p.tinhthanh)).includes(provVal);
+            
             let matchesTo = true;
             if (toVal) {
-                if(toVal === "Trường Sa") matchesTo = p.nguoinhan.includes("Trường Sa") || p.nguoinhan.includes("DK1");
-                else matchesTo = p.nguoinhan.includes(toVal);
+                // FIXED: CHUYỂN CẢ HAI VỀ DẠNG KHÔNG DẤU & CHỮ THƯỜNG ĐỂ SO SÁNH
+                let pTo = removeVietnameseTones(p.nguoinhan);
+                if(toVal === "Trường Sa") matchesTo = pTo.includes("truong sa") || pTo.includes("dk1");
+                else matchesTo = pTo.includes(removeVietnameseTones(toVal));
             }
             return matchesName && matchesProv && matchesTo;
         });
@@ -765,9 +805,9 @@
             const ytId = getYtId(p.videoLink);
             const driveId = getDriveId(p.videoLink);
             if(ytId) {
-                html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0" ${sandboxAttr} allowfullscreen></iframe></div>`;
+                html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0" ${sandboxAttr} allowfullscreen loading="lazy"></iframe></div>`;
             } else if (driveId) {
-                html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://drive.google.com/file/d/${driveId}/preview" ${sandboxAttr} allowfullscreen></iframe></div>`;
+                html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://drive.google.com/file/d/${driveId}/preview" ${sandboxAttr} allowfullscreen loading="lazy"></iframe></div>`;
             }
         } 
         else if(p.linkfile) {
@@ -778,19 +818,19 @@
                 const isPDF = !isImage && !isVideo; 
                 
                 if (isVideo) {
-                    html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://drive.google.com/file/d/${id}/preview" ${sandboxAttr} allowfullscreen></iframe></div>`;
+                    html = `<div class="video-container" onclick="event.stopPropagation()"><iframe src="https://drive.google.com/file/d/${id}/preview" ${sandboxAttr} allowfullscreen loading="lazy"></iframe></div>`;
                 } else if (isImage) {
                     if(isDetail) {
                         html = `<div class="detail-image-box mb-3 overflow-hidden text-center" style="background:#f8fafc; border-radius:12px; padding:10px;">
-                                    <img id="main-detail-img" src="https://drive.google.com/thumbnail?id=${id}&sz=w1600" style="transition: transform 0.3s ease; max-width:100%; display:inline-block;">
+                                    <img id="main-detail-img" src="https://drive.google.com/thumbnail?id=${id}&sz=w1600" style="transition: transform 0.3s ease; max-width:100%; display:inline-block;" loading="lazy">
                                 </div>
                                 <div class="text-center mb-4">
                                     <button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="rotateImg()"><i class="fas fa-sync-alt me-1"></i> Xoay ảnh</button>
                                 </div>`;
                     } else {
-                        // SỬA: BỎ NÚT XOAY TRÊN ẢNH
+                        // OPTIMIZATION: Thêm loading="lazy" vào thẻ img
                         html = `<div class="media-box">
-                                    <img id="img-${p.id}" src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s ease;">
+                                    <img id="img-${p.id}" src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s ease;" loading="lazy">
                                 </div>`;
                     }
                 } else if (isPDF) {
@@ -798,7 +838,7 @@
                         html = `<div class="pdf-container mb-3"><iframe src="https://drive.google.com/file/d/${id}/preview" ${sandboxAttr}></iframe></div>`;
                     } else {
                         html = `<div class="media-box">
-                                    <img src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; height:100%; object-fit:cover;">
+                                    <img src="https://drive.google.com/thumbnail?id=${id}&sz=w800" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
                                 </div>`;
                     }
                 }
@@ -832,14 +872,21 @@
         }
     }
 
+    // --- HÀM RENDER TỐI ƯU HIỆU SUẤT ---
     function render(lst, divId) {
-        const div = document.getElementById(divId); div.innerHTML = '';
-        if(!lst.length) { if(divId === 'home-feed') div.innerHTML='<div class="text-center w-100 text-muted py-5">Chưa có bài viết nào.</div>'; return; }
+        const div = document.getElementById(divId); 
+        div.innerHTML = '';
+        if(!lst.length) { 
+            if(divId === 'home-feed' || divId === 'home-newest') div.innerHTML='<div class="text-center w-100 text-muted py-5">Chưa có bài viết nào.</div>'; 
+            return; 
+        }
+        
+        // SỬ DỤNG PHƯƠNG PHÁP GỘP CHUỖI ĐỂ TĂNG TỐC ĐỘ RENDER
+        let htmlContent = '';
+        
         lst.forEach(p => {
             let displayContent = standardizeContent(p.noidung);
             
-            // XÁC ĐỊNH XEM CÓ ẢNH ĐỂ XOAY KHÔNG
-            // Chỉ hiện nút xoay nếu là file ảnh
             let showRotateBtn = false;
             if (p.linkfile && (String(p.loaifile).toLowerCase().includes('image'))) {
                 showRotateBtn = true;
@@ -847,11 +894,10 @@
 
             let rotateBtnHTML = '';
             if (showRotateBtn) {
-                // SỬA: ĐẶT NÚT XOAY Ở FOOTER
                 rotateBtnHTML = `<button class="btn btn-sm btn-light border rounded-circle text-muted mx-2" onclick="event.stopPropagation(); rotatePostImg('${p.id}')" title="Xoay ảnh"><i class="fas fa-sync-alt"></i></button>`;
             }
             
-            div.innerHTML += `
+            htmlContent += `
             <div class="col-md-6 col-lg-3 animate__animated animate__fadeIn">
                 <div class="post-card" style="cursor: pointer;" onclick="detail('${p.id}')">
                     <div class="post-header">
@@ -874,6 +920,9 @@
                 </div>
             </div>`;
         });
+        
+        // CẬP NHẬT DOM 1 LẦN DUY NHẤT
+        div.innerHTML = htmlContent;
     }
 
     function detail(id) {
@@ -900,8 +949,8 @@
         const p = posts.find(x => x.id == id);
         if(p) {
             if(!sessionLikes[id]) sessionLikes[id] = 0;
-            if(sessionLikes[id] >= 2000) {
-                showNotify("Bạn chỉ được thả tim tối đa 2000 lần cho bài viết này trong 1 lân đăng nhập!", "warning");
+            if(sessionLikes[id] >= 4000) {
+                showNotify("Bạn chỉ được thả tim tối đa 4000 lần cho bài viết này trong 1 lân đăng nhập!", "warning");
                 return;
             }
             sessionLikes[id]++;
