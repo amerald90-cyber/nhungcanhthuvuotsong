@@ -1375,28 +1375,72 @@
         } catch (error) { console.error(error); showNotify('Có lỗi xảy ra, vui lòng thử lại!', 'error'); b.innerHTML=old; b.disabled=false; }
     }
     
-    // --- HÀM XỬ LÝ CHẠM VÀO ĐẢO (UPDATED) ---
+   // --- HÀM XỬ LÝ CHẠM VÀO ĐẢO (PHIÊN BẢN: KHẲNG ĐỊNH CHỦ QUYỀN) ---
     function openIslandVideo(islandName) {
         const modal = new bootstrap.Modal(document.getElementById('islandVideoModal'));
         const container = document.getElementById('island-video-container');
         const title = document.getElementById('island-video-title');
         const desc = document.getElementById('island-video-desc');
         
-        const data = islandData[islandName];
+        // 1. Lấy dữ liệu đảo
+        const data = islandData[islandName]; 
         const displayName = ISLAND_NAMES_VN[islandName] || islandName;
         
-        if (data && (data.videoLink || data.linkfile)) {
+        // --- ẢNH NỀN CHỦ QUYỀN (Tự tạo bằng code) ---
+        // Tôi dùng ảnh Cờ đỏ sao vàng hoặc Biển đảo làm nền, và viết chữ đè lên
+        const sovereigntyHTML = `
+            <div class="media-box" style="position: relative; overflow: hidden; background: #da251d;">
+                <!-- Ảnh nền mờ (Lá cờ hoặc Biển) -->
+                <img src="https://media.vov.vn/sites/default/files/styles/large/public/2021-04/co_do_sao_vang.jpg" 
+                     style="width:100%; height:100%; object-fit:cover; opacity: 0.4; filter: blur(2px);">
+                
+                <!-- Lớp phủ chữ Khẳng Định Chủ Quyền -->
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; z-index: 10;">
+                     
+                     <i class="fas fa-star fa-spin" style="color: #FFFF00; font-size: 2.5rem; margin-bottom: 15px; filter: drop-shadow(0 0 15px rgba(255,255,0,0.8)); animation-duration: 3s;"></i>
+                     
+                     <div style="color: #FFFF00; font-size: 1.4rem; font-weight: 900; text-shadow: 2px 2px 0 #da251d, 0 0 20px rgba(0,0,0,0.5); font-family: 'Montserrat', sans-serif; line-height: 1.4; text-transform: uppercase; letter-spacing: 1px;">
+                        HOÀNG SA - TRƯỜNG SA
+                     </div>
+                     <div style="color: #fff; font-size: 1.8rem; font-weight: 900; text-shadow: 2px 2px 0 #da251d, 0 0 20px rgba(0,0,0,0.5); font-family: 'Playfair Display', serif; text-transform: uppercase;">
+                        LÀ CỦA VIỆT NAM
+                     </div>
+                </div>
+            </div>`;
+
+        if (data) {
+            // --- XỬ LÝ TIÊU ĐỀ ---
             title.innerHTML = `<span style="cursor:pointer; text-decoration:underline; color: var(--primary)" onclick="showIslandInfo('${islandName}')" title="Xem chi tiết">Chạm tay vào đảo: ${displayName} <i class="fas fa-external-link-alt ms-2 small"></i></span>`;
             
-            container.innerHTML = getMedia(data, false);
-            let schoolName = data.truonglop;
+            // --- XỬ LÝ MEDIA ---
+            let mediaHtml = getMedia(data, false);
+            
+            // Nếu không có Video và không có Ảnh -> Dùng khung Chủ Quyền
+            if (!mediaHtml) {
+                mediaHtml = sovereigntyHTML;
+            }
+            container.innerHTML = mediaHtml;
+
+            // --- XỬ LÝ NỘI DUNG LỜI NHẮN ---
+            let schoolName = data.truonglop ? data.truonglop : "Chưa cập nhật trường";
             if (schoolName.includes("-")) { schoolName = schoolName.split("-")[1].trim(); }
-            desc.innerHTML = `<i class="fas fa-university me-2"></i> ${schoolName} <br> <i class="fas fa-user me-2"></i> Người gửi: ${data.hoten}`;
+            
+            let shortMsg = standardizeContent(data.noidung);
+            if(shortMsg.length > 120) shortMsg = shortMsg.substring(0, 120) + "...";
+
+            desc.innerHTML = `
+                <div class="mb-2 fst-italic" style="font-weight: 600; color: #334155;">"${shortMsg}"</div>
+                <div class="text-muted small border-top pt-2 d-flex justify-content-between">
+                    <span><i class="fas fa-university me-1"></i> ${schoolName}</span>
+                    <span class="fw-bold text-primary"><i class="fas fa-user me-1"></i> ${data.hoten}</span>
+                </div>`;
         } else {
-            title.innerText = "Chạm tay vào đảo: " + displayName;
-            container.innerHTML = '<div style="padding: 50px; color: #888;">Chưa có dữ liệu video cho đảo này.</div>';
-            desc.innerHTML = '';
+            // Trường hợp Đảo này chưa có ai gửi thư trong Sheet
+            title.innerText = displayName;
+            container.innerHTML = sovereigntyHTML;
+            desc.innerHTML = '<div class="text-center py-2 text-muted">Chưa có bài viết nào gửi đến đảo này.</div>';
         }
+        
         modal.show();
         
         document.getElementById('islandVideoModal').addEventListener('hidden.bs.modal', function () {
