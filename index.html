@@ -382,7 +382,7 @@
         <ul class="navbar-nav ms-auto align-items-center">
           <li class="nav-item"><a class="nav-link" onclick="goHome()">Trang chủ</a></li>
           <!-- MENU MỚI THÊM VÀO -->
-          <li class="nav-item"><a class="nav-link nav-link-special" onclick="showMap()"><i class="fas fa-map-marked-alt me-1"></i> Chạm vào Trường Sa</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-special" href="https://hanhtrinhsobiendaoquehuong.vercel.app/" target="_blank"><i class="fas fa-map-marked-alt me-1"></i> Chạm vào Trường Sa</a></li>
           
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" data-bs-toggle="dropdown"><i class="far fa-compass me-1"></i> Khám Phá</a>
@@ -1068,7 +1068,10 @@
     function goHome(){ show('home-screen'); }
     function showForm(){ document.getElementById('uForm').reset(); document.getElementById('btn-send').innerHTML = 'GỬI THƯ NGAY'; document.getElementById('btn-send').disabled = false; show('form-screen'); }
     function showAbout() { show('about-screen'); }
-    function showMap() { show('map-screen'); } 
+    function showMap() { 
+  // show('map-screen'); // Dòng này tạm đóng lại để không hiện bản đồ cũ
+  window.open("https://hanhtrinhsobiendaoquehuong.vercel.app/", "_blank"); 
+} 
     function showSuccess() { document.getElementById('success-msg-content').innerText = successMessages[Math.floor(Math.random() * successMessages.length)]; show('success-screen'); }
     
     function openSearch() {
