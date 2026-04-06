@@ -349,7 +349,30 @@
         70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
         100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
     }
+/* Hiệu ứng tim bay */
+.floating-heart {
+    position: fixed;
+    color: #ef4444; /* Màu đỏ của tim */
+    pointer-events: none; /* Không cản trở click chuột */
+    z-index: 99999;
+    font-size: 1.5rem;
+    animation: heartFlyUp 1.2s ease-out forwards;
+}
 
+@keyframes heartFlyUp {
+    0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-50px) scale(1.3) rotate(15deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-120px) scale(1.5) rotate(-15deg);
+        opacity: 0;
+    }
+}
   </style>
 </head>
 <body>
@@ -1292,6 +1315,8 @@ document.onkeydown = function(e) {
     }
 
     async function like(id) {
+const btn = event.currentTarget; 
+    createHeartAnimation(btn);
         const p = posts.find(x => x.id == id);
         if(p) {
             if(!sessionLikes[id]) sessionLikes[id] = 0;
@@ -1580,7 +1605,7 @@ document.onkeydown = function(e) {
         // 5. Hiển thị màn hình
         show('island-info-screen');
         
-        // --- QUAN TRỌNG: Đã XÓA dòng lệnh ẩn Navbar ở đây ---
+        // --- QUAN TRỌNG ---
         // Navbar sẽ vẫn hiển thị bình thường
     }
     // Hàm gọi lại bắt buộc của YouTube API
@@ -1631,6 +1656,35 @@ document.onkeydown = function(e) {
             isMusicPlaying = true;
         }
     }
+function createHeartAnimation(element) {
+    if (!element) return;
+    
+    // Lấy vị trí của nút được bấm
+    const rect = element.getBoundingClientRect();
+    const count = 3; // Số lượng tim bay lên mỗi lần bấm
+
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+            const heart = document.createElement('i');
+            heart.className = 'fas fa-heart floating-heart';
+            
+            // Vị trí xuất hiện ngẫu nhiên quanh nút
+            const offsetX = (Math.random() - 0.5) * 40; 
+            heart.style.left = (rect.left + rect.width / 2 + offsetX) + 'px';
+            heart.style.top = (rect.top) + 'px';
+            
+            // Kích thước ngẫu nhiên một chút
+            heart.style.fontSize = (Math.random() * 10 + 15) + 'px';
+
+            document.body.appendChild(heart);
+
+            // Xóa tim sau khi diễn xong hoạt ảnh để nhẹ máy
+            setTimeout(() => {
+                heart.remove();
+            }, 1200);
+        }, i * 100); // Mỗi trái tim bay cách nhau một chút
+    }
+}
 </script>
 </body>
 </html>
