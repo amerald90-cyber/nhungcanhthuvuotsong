@@ -349,31 +349,73 @@
         70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
         100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
     }
-/* Hiệu ứng tim bay */
-.floating-heart {
+/* Hiệu ứng Tim bay kiểu bong bóng (Giống bản Offline) */
+.bubble-heart {
     position: fixed;
-    color: #ef4444; /* Màu đỏ của tim */
-    pointer-events: none; /* Không cản trở click chuột */
-    z-index: 99999;
-    font-size: 1.5rem;
-    animation: heartFlyUp 1.2s ease-out forwards;
+    bottom: -50px; /* Xuất phát từ dưới đáy màn hình */
+    pointer-events: none;
+    z-index: 100000;
+    font-size: var(--size);
+    left: var(--left);
+    animation: bubbleUp var(--duration) linear forwards;
+    opacity: 0;
 }
 
-@keyframes heartFlyUp {
-    0% {
-        transform: translateY(0) scale(1) rotate(0deg);
-        opacity: 1;
-    }
-    50% {
-        transform: translateY(-50px) scale(1.3) rotate(15deg);
-        opacity: 0.8;
-    }
-    100% {
-        transform: translateY(-120px) scale(1.5) rotate(-15deg);
-        opacity: 0;
-    }
+@keyframes bubbleUp {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    25% { transform: translateY(-25vh) translateX(30px); }
+    50% { transform: translateY(-50vh) translateX(-30px); }
+    75% { transform: translateY(-75vh) translateX(30px); opacity: 1; }
+    100% { transform: translateY(-110vh) translateX(0); opacity: 0; }
+} 
+/* GIAO DIỆN 2 CỘT CHI TIẾT */
+#detail-screen {
+    background: #fff; z-index: 5000; position: fixed; top: 0; left: 0; 
+    width: 100%; height: 100%; overflow: hidden; 
+    display: none; /* Mặc định ẩn để không che trang chủ */
+    flex-direction: column;
 }
-  </style>
+
+/* Khi có class active thì mới hiện ra */
+#detail-screen.active { display: flex !important; }
+
+.detail-header-sticky {
+    height: 60px; background: #fff; border-bottom: 1px solid #e2e8f0;
+    display: flex; align-items: center; padding: 0 20px; flex-shrink: 0; z-index: 5100;
+}
+
+.detail-wrapper-flex { display: flex; flex: 1; overflow: hidden; background: #fff; }
+
+.pane-left { 
+    width: 60%; background: #f1f5f9; display: flex; align-items: center; 
+    justify-content: center; padding: 20px; overflow: hidden; position: relative;
+}
+
+.pane-right { 
+    flex: 1; overflow-y: auto; padding: 40px; background: #fff; 
+    border-left: 1px solid #e2e8f0;
+}
+
+.resizer-bar {
+    width: 10px; background: #f8fafc; cursor: col-resize;
+    display: flex; align-items: center; justify-content: center; 
+    z-index: 10; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;
+}
+.resizer-bar:hover { background: #cbd5e1; }
+
+.sender-info-box {
+    background: #f8fafc; border-radius: 12px; padding: 20px;
+    margin-bottom: 30px; border: 1px solid #e2e8f0;
+}
+.info-line { display: flex; margin-bottom: 8px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; font-size: 0.95rem; }
+.info-label { width: 110px; color: #64748b; font-weight: 600; flex-shrink: 0; }
+.info-val { color: #1e293b; font-weight: 700; }
+
+.detail-content-text {
+    font-family: 'Merriweather', serif; font-size: 1.1rem; line-height: 1.8;
+    color: #334155; margin-bottom: 40px; text-align: justify; white-space: pre-line;
+} </style>
 </head>
 <body>
 
@@ -1296,32 +1338,71 @@ document.onkeydown = function(e) {
 
     function detail(id) {
         currentRotation = 0; 
-        currId = id; const p = posts.find(x=>x.id==id); if(!p) return;
+        currId = id; 
+        const p = posts.find(x => x.id == id); 
+        if(!p) return;
+
+        // Ẩn menu chính
         document.getElementById('mainNav').classList.add('hidden');
         
         let displayContent = standardizeContent(p.noidung);
 
-        document.getElementById('detail-cont').innerHTML = `
-            <div class="detail-title">
-                ${p.hoten}
-                <div class="fs-6 text-muted fw-normal mt-1"><i class="fas fa-school me-2"></i>${p.truonglop}</div>
+        // Đổ cấu trúc 2 cột vào detail-screen
+        const detailScreen = document.getElementById('detail-screen');
+        detailScreen.innerHTML = `
+            <div class="detail-header-sticky">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <button class="btn btn-dark rounded-pill border shadow-sm fw-bold px-4" onclick="closeDetail()">
+                        <i class="fas fa-arrow-left me-2"></i> Quay lại
+                    </button>
+                    <div class="fw-bold text-primary d-none d-md-block" style="font-family: 'Playfair Display', serif; letter-spacing: 1px;">CHI TIẾT BÀI ĐĂNG</div>
+                    <div style="width: 100px;"></div>
+                </div>
             </div>
-            <div class="detail-meta"><span>Gửi: ${p.nguoinhan}</span> <span class="mx-2">|</span> <span><i class="fas fa-map-marker-alt me-1"></i> ${p.tinhthanh}</span></div>
-            ${getMedia(p, true)}
-            <div class="detail-content">${displayContent}</div>
-            <div class="text-center mt-5"><button class="btn btn-outline-danger btn-lg rounded-pill px-5 fw-bold btn-like-wrapper-${p.id}" onclick="like('${p.id}')"><i class="fas fa-heart me-2"></i> Thả tim (<span class="like-cnt-${p.id}">${p.sotim}</span>)</button></div>
+            
+            <div class="detail-wrapper-flex" id="resizable-box">
+                <div class="pane-left" id="left-pane">
+                    ${getMedia(p, true)}
+                </div>
+                <div class="resizer-bar" id="drag-bar"><i class="fas fa-ellipsis-v text-muted"></i></div>
+                <div class="pane-right">
+                    <div class="sender-info-box">
+                        <div class="info-line"><div class="info-label">Người gửi:</div><div class="info-val">${p.hoten}</div></div>
+                        <div class="info-line"><div class="info-label">Trường:</div><div class="info-val">${p.truonglop}</div></div>
+                        <div class="info-line"><div class="info-label">Tỉnh:</div><div class="info-val">${p.tinhthanh}</div></div>
+                        <div class="info-line" style="border:none"><div class="info-label text-primary">Gửi đến:</div><div class="info-val text-primary">${p.nguoinhan}</div></div>
+                    </div>
+                    <div class="detail-content-text">${displayContent}</div>
+                    <div class="text-center mb-5">
+                        <button class="btn btn-outline-danger btn-lg rounded-pill px-5 fw-bold btn-like-wrapper-${p.id}" onclick="like('${p.id}')">
+                            <i class="fas fa-heart me-2"></i> Thả tim (<span class="like-cnt-${p.id}">${p.sotim}</span>)
+                        </button>
+                    </div>
+                    <div class="comment-section">
+                         <h5 class="fw-bold text-dark mb-4" style="font-family: 'Playfair Display', serif;"><i class="far fa-comments me-2"></i>Bình luận & Chia sẻ</h5>
+                         <div id="cmt-list" style="max-height:400px; overflow-y:auto;" class="mb-4"></div>
+                         <div class="d-flex gap-2">
+                             <input id="c-name" class="form-control rounded-pill border-0 shadow-sm py-3 px-4" placeholder="Tên của bạn" style="flex:1">
+                             <input id="c-text" class="form-control rounded-pill border-0 shadow-sm py-3 px-4" placeholder="Viết bình luận..." style="flex:2">
+                             <button class="btn btn-primary rounded-circle shadow p-3" onclick="subCmt()"><i class="fas fa-paper-plane"></i></button>
+                         </div>
+                    </div>
+                </div>
+            </div>
         `;
-        show('detail-screen'); loadCmt(id);
+        show('detail-screen'); // Gọi hàm show gốc để thêm class active
+        loadCmt(id);
+        initResizer();
     }
 
     async function like(id) {
-const btn = event.currentTarget; 
-    createHeartAnimation(btn);
+        const btn = event.currentTarget; 
+        createHeartAnimation();
         const p = posts.find(x => x.id == id);
         if(p) {
             if(!sessionLikes[id]) sessionLikes[id] = 0;
             if(sessionLikes[id] >= 4000) {
-                showNotify("Bạn chỉ được thả tim tối đa 4000 lần cho bài viết này trong 1 lân đăng nhập!", "warning");
+                showNotify("Bạn chỉ được thả tim tối đa 4000 lần cho bài viết này!", "warning");
                 return;
             }
             sessionLikes[id]++;
@@ -1333,6 +1414,7 @@ const btn = event.currentTarget;
             await callAPI('like', { id: id }, 'POST');
         }
     }
+
 
     async function loadCmt(id, targetElementId = 'cmt-list') {
         const box = document.getElementById(targetElementId);
@@ -1656,35 +1738,50 @@ const btn = event.currentTarget;
             isMusicPlaying = true;
         }
     }
-function createHeartAnimation(element) {
-    if (!element) return;
-    
-    // Lấy vị trí của nút được bấm
-    const rect = element.getBoundingClientRect();
-    const count = 3; // Số lượng tim bay lên mỗi lần bấm
+function createHeartAnimation() {
+    const heartCount = 20; // Số lượng tim mỗi lần bấm (Giống bản offline)
+    const container = document.body;
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < heartCount; i++) {
         setTimeout(() => {
-            const heart = document.createElement('i');
-            heart.className = 'fas fa-heart floating-heart';
-            
-            // Vị trí xuất hiện ngẫu nhiên quanh nút
-            const offsetX = (Math.random() - 0.5) * 40; 
-            heart.style.left = (rect.left + rect.width / 2 + offsetX) + 'px';
-            heart.style.top = (rect.top) + 'px';
-            
-            // Kích thước ngẫu nhiên một chút
-            heart.style.fontSize = (Math.random() * 10 + 15) + 'px';
+            const heart = document.createElement('div');
+            heart.className = 'bubble-heart';
+            heart.innerHTML = '❤️';
 
-            document.body.appendChild(heart);
+            // Tạo các thông số ngẫu nhiên cho từng trái tim
+            const left = Math.random() * 100 + 'vw'; // Vị trí ngang ngẫu nhiên
+            const size = (Math.random() * 1.5 + 0.8) + 'rem'; // Kích thước to nhỏ
+            const duration = (Math.random() * 3 + 2) + 's'; // Tốc độ bay (2s - 5s)
+            
+            heart.style.setProperty('--left', left);
+            heart.style.setProperty('--size', size);
+            heart.style.setProperty('--duration', duration);
+            
+            container.appendChild(heart);
 
-            // Xóa tim sau khi diễn xong hoạt ảnh để nhẹ máy
-            setTimeout(() => {
-                heart.remove();
-            }, 1200);
-        }, i * 100); // Mỗi trái tim bay cách nhau một chút
+            // Tự xóa tim sau khi bay xong để nhẹ máy
+            setTimeout(() => heart.remove(), 5000);
+        }, i * 150); // Các tim bay cách nhau một chút để tạo thành chùm
     }
 }
+ function initResizer() {
+        const leftPane = document.getElementById('left-pane');
+        const resizer = document.getElementById('drag-bar');
+        const container = document.getElementById('resizable-box');
+        if(!resizer) return;
+        resizer.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+        function onMouseMove(e) {
+            let containerRect = container.getBoundingClientRect();
+            let pointerRelativeX = e.clientX - containerRect.left;
+            let newWidth = (pointerRelativeX / containerRect.width) * 100;
+            if (newWidth > 15 && newWidth < 85) { leftPane.style.width = newWidth + '%'; }
+        }
+        function onMouseUp() { document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); }
+    }
 </script>
 </body>
 </html>
